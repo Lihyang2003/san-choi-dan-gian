@@ -79,7 +79,7 @@ svg.i{fill:none;stroke:var(--cream);stroke-width:2.4;stroke-linecap:round;stroke
 .sign{display:inline-flex;padding:10px 12px;border-radius:20px;background:linear-gradient(#b9773d,#8a4d22);box-shadow:inset 0 0 0 3px var(--brown-dk),0 5px 0 var(--brown-xdk),0 10px 16px rgba(0,0,0,.2)}
 .sign b{display:block;padding:6px 26px;border-radius:12px;background:linear-gradient(#fce3b6,#f3c27f);box-shadow:inset 0 2px 3px rgba(122,66,32,.35);font-family:var(--display);font-weight:800;font-size:34px;line-height:36px;color:var(--title-red);text-transform:uppercase;white-space:nowrap}
 .pill{display:inline-flex;align-items:center;gap:8px;border-radius:999px}
-.coin{width:20px;height:20px;border-radius:50%;background:url(assets/coin.png) center/150% no-repeat;flex:none}
+.coin{width:20px;height:20px;border-radius:50%;background:url(assets/coin.png) center/cover no-repeat;flex:none}
 
 /* panels */
 .dark{background:var(--brown-dk);border-radius:30px;box-shadow:inset 0 0 0 6px var(--gold);color:var(--cream)}
@@ -87,7 +87,7 @@ svg.i{fill:none;stroke:var(--cream);stroke-width:2.4;stroke-linecap:round;stroke
 .chipst{padding:2px 8px;border-radius:999px;font-size:12px;font-weight:700;color:var(--cream);background:rgba(252,230,196,.2);white-space:nowrap}
 .chipst.g{background:var(--green)}.chipst.r{background:var(--red)}
 .pchip{display:flex;align-items:center;gap:8px;min-width:0}
-.pchip img{width:44px;height:44px;border-radius:50%;box-shadow:0 0 0 2px var(--cream);flex:none;object-fit:cover}
+.pchip img{width:44px;height:44px;border-radius:50%;outline:2px solid var(--cream);outline-offset:-2px;flex:none;object-fit:cover}
 .pchip .n{font-family:var(--display);font-weight:700;font-size:14px;line-height:15px;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
 .pchip .c{display:flex;align-items:center;gap:4px;font-weight:700;font-size:12px;color:var(--coin)}
 .pchip .c .coin{width:16px;height:16px}
@@ -145,7 +145,7 @@ svg.i{fill:none;stroke:var(--cream);stroke-width:2.4;stroke-linecap:round;stroke
 .tile .lock svg{width:14px;height:14px}
 .tile .tag{position:absolute;left:50%;top:-12px;transform:translateX(-50%);padding:2px 10px;border-radius:999px;font-size:12px;font-weight:800;color:var(--cream);white-space:nowrap}
 .tile .bets{position:absolute;left:8px;bottom:8px;display:flex}
-.tile .bets img{width:32px;height:32px;border-radius:50%;box-shadow:0 0 0 2px var(--cream-3),0 2px 4px rgba(0,0,0,.25);margin-right:-8px;animation:pop .4s cubic-bezier(.3,1.5,.5,1) both}
+.tile .bets img{width:32px;height:32px;border-radius:50%;object-fit:cover;outline:2px solid #fff8ea;outline-offset:-2px;box-shadow:0 2px 4px rgba(0,0,0,.25);margin-right:-8px;animation:pop .4s cubic-bezier(.3,1.5,.5,1) both}
 .tile.sel{box-shadow:inset 0 0 0 6px var(--green),0 0 16px rgba(94,158,69,.45),0 5px 0 rgba(122,66,32,.35);transform:translateY(-3px)}
 .tile.sel .tick,.tile.win .tick{display:block}
 .tile.locked{box-shadow:inset 0 0 0 6px var(--green),0 0 16px rgba(94,158,69,.45),0 5px 0 rgba(122,66,32,.35)}
@@ -184,7 +184,7 @@ svg.i{fill:none;stroke:var(--cream);stroke-width:2.4;stroke-linecap:round;stroke
 .msgs{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:14px;scrollbar-width:none}
 .msgs::-webkit-scrollbar{display:none}
 .msg{display:flex;gap:8px;align-items:flex-start;animation:pop .35s cubic-bezier(.3,1.5,.5,1) both}
-.msg img{width:44px;height:44px;border-radius:50%;margin-top:7px;flex:none;object-fit:cover}
+.msg img{width:44px;height:44px;border-radius:50%;outline:2px solid var(--cream);outline-offset:-2px;margin-top:7px;flex:none;object-fit:cover}
 .msg .who{font-size:12px;font-weight:700;color:var(--cream-2)}
 .msg .bub{display:inline-block;margin-top:2px;padding:6px 12px;border-radius:14px;background:var(--cream-2);color:var(--ink);font-weight:700;font-size:15px;max-width:180px;word-wrap:break-word}
 .msg .t{font-size:12px;color:rgba(252,230,196,.6);align-self:flex-end;margin-left:4px}
@@ -269,17 +269,17 @@ svg.i{fill:none;stroke:var(--cream);stroke-width:2.4;stroke-linecap:round;stroke
 .streak div.got{background:#e9f3dd;box-shadow:inset 0 0 0 2px #a9cf8f}
 .streak div.today{box-shadow:inset 0 0 0 3px var(--red)}
 .burst{position:relative;height:120px;display:grid;place-items:center}
-.burst .c0{width:84px;height:84px;border-radius:50%;background:url(assets/coin.png) center/150% no-repeat;animation:spin .8s cubic-bezier(.3,1.5,.5,1) both;filter:drop-shadow(0 6px 5px rgba(120,70,0,.35))}
+.burst .c0{width:84px;height:84px;border-radius:50%;background:url(assets/coin.png) center/cover no-repeat;animation:spin .8s cubic-bezier(.3,1.5,.5,1) both;filter:drop-shadow(0 6px 5px rgba(120,70,0,.35))}
 @keyframes spin{from{transform:scale(.2) rotateY(540deg)}}
-.burst span{position:absolute;width:24px;height:24px;border-radius:50%;background:url(assets/coin.png) center/150% no-repeat;animation:burst 1s ease-out both}
+.burst span{position:absolute;width:24px;height:24px;border-radius:50%;background:url(assets/coin.png) center/cover no-repeat;animation:burst 1s ease-out both}
 @keyframes burst{from{transform:translate(0,0) scale(.4);opacity:1}to{transform:translate(var(--x),var(--y)) scale(1);opacity:0}}
 .confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:70}
 .confetti i{position:absolute;top:-20px;width:12px;height:18px;border-radius:3px;animation:conf 2.4s linear forwards}
 @keyframes conf{to{transform:translateY(780px) rotate(720deg)}}
-.seat{position:absolute;width:210px;height:170px;border-radius:24px;text-align:center;box-sizing:border-box;padding-top:16px}
+.seat{position:absolute;width:210px;height:170px;border-radius:24px;text-align:center;box-sizing:border-box;padding-top:12px}
 .seat.full{background:var(--cream-2);box-shadow:inset 0 0 0 4px var(--gold),0 5px 0 rgba(122,66,32,.35);animation:pop .45s cubic-bezier(.3,1.5,.5,1) both}
 .seat.empty{border:3px dashed rgba(255,243,220,.75);background:rgba(255,243,220,.15)}
-.seat .av{width:76px;height:76px;border-radius:50%;margin:0 auto;box-shadow:0 0 0 3px #fff,0 0 0 5px var(--gold);object-fit:cover}
+.seat .av{width:84px;height:84px;border-radius:50%;margin:0 auto;outline:3px solid #fff8ea;outline-offset:-3px;object-fit:cover}
 .seat .nm{font-family:var(--display);font-weight:800;font-size:22px;color:var(--ink);margin-top:6px;line-height:1.1}
 .seat .plus{width:54px;height:54px;border-radius:50%;margin:22px auto 6px;background:var(--brown);display:grid;place-items:center}
 .seat .plus svg{width:24px;height:24px}
@@ -476,7 +476,7 @@ function lixiModal(){
   const d=daily(),checked=S.checkin.last===today();
   const nextDay=checked?S.checkin.streak:(S.checkin.last===yesterday()?S.checkin.streak%7+1:1);
   const vLeft=3-d.video;
-  const row=(id,t,s,btn,cls,dis)=>`<div class="task ${dis?'done':''}"><i class="coin" style="width:22px;height:22px"></i><div class="tx"><b>${t}</b><span>${s}</span></div><button class="btn ${cls} sm" data-t="${id}" ${dis?'disabled':''} style="min-width:120px">${btn}</button></div>`;
+  const row=(id,t,s,btn,cls,dis)=>`<div class="task ${dis?'done':''}"><i class="coin" style="width:36px;height:36px"></i><div class="tx"><b>${t}</b><span>${s}</span></div><button class="btn ${cls} sm" data-t="${id}" ${dis?'disabled':''} style="min-width:120px">${btn}</button></div>`;
   const b=h(`<div><p class="p" style="text-align:center;margin-bottom:14px">Làm nhiệm vụ nhỏ để có thêm lì xì chơi Bầu Cua và Ô Ăn Quan. Bạn đang có <b style="color:var(--ink)"><span data-bal>${S.balance}</span> lì xì</b>.</p>
     <div style="display:flex;flex-direction:column;gap:10px">
       ${row('ci','Điểm danh hôm nay',checked?`Đã nhận · chuỗi ${nextDay} ngày`:`+${STREAK[nextDay-1]} lì xì · chuỗi ${nextDay} ngày`,checked?'Đã nhận':'Nhận','orange',checked)}
@@ -529,13 +529,13 @@ function profile(tab){
     ${ibtn('bk','back','Về trang chủ',24,20)}${ibtn('hSet','settings','Cài đặt',1208,20)}
     <div class="abs" style="left:0;right:0;top:20px;text-align:center;pointer-events:none"><div class="sign"><b>Hồ sơ của bạn</b></div></div>
     <div class="abs" style="left:44px;top:126px;width:370px;height:560px;border-radius:30px;background:var(--cream-3);box-shadow:inset 0 0 0 8px var(--card-line),0 8px 0 var(--brown);text-align:center;padding:40px 34px;box-sizing:border-box">
-      <img src="assets/av-me.png" alt="" style="width:120px;height:120px;border-radius:50%;margin:0 auto;box-shadow:0 0 0 4px #fff,0 0 0 8px var(--gold)">
+      <img src="assets/av-me.png" alt="" style="width:130px;height:130px;border-radius:50%;margin:-5px auto 0;object-fit:cover;outline:5px solid var(--gold);outline-offset:-5px;box-shadow:0 6px 0 rgba(122,66,32,.5)">
       <div id="nb" style="margin-top:14px"><div style="font-family:var(--display);font-weight:800;font-size:34px;line-height:1.1;color:var(--ink);word-break:break-word">${esc(S.name)}</div></div>
       <div class="p" style="font-size:12px;font-weight:700">ID: ${S.pid} · tham gia ${S.joined}</div>
       <div style="margin-top:8px"><span class="pill" style="padding:2px 12px;background:var(--coin);font-weight:900;font-size:13px">Cấp ${lv}</span> <button id="edit" class="pill" style="padding:2px 12px;background:#f0dcb4;font-weight:800;font-size:13px">Đổi tên</button></div>
       <div class="prog" style="margin-top:16px"><i style="width:${cur/need*100}%"></i></div>
       <div class="p num" style="font-size:12px;font-weight:700;margin-top:6px">${cur} / ${need} điểm${nextStake?` · còn ${need-cur} điểm lên cấp ${lv+1}`:''}</div>
-      <div style="margin-top:20px"><span class="pill" style="padding:6px 22px 6px 8px;background:var(--brown-dk);box-shadow:inset 0 0 0 2px var(--gold);font-family:var(--display);font-weight:800;font-size:22px;color:var(--cream)"><i class="coin" style="width:30px;height:30px"></i><span data-bal>${S.balance}</span>&nbsp;lì xì</span></div>
+      <div style="margin-top:20px"><span class="pill" style="padding:6px 22px 6px 8px;background:var(--brown-dk);box-shadow:inset 0 0 0 2px var(--gold);font-family:var(--display);font-weight:800;font-size:22px;color:var(--cream)"><i class="coin" style="width:26px;height:26px"></i><span data-bal>${S.balance}</span>&nbsp;lì xì</span></div>
     </div>
     <div class="abs" style="left:452px;top:126px;width:784px;height:560px;border-radius:30px;background:var(--cream-3);box-shadow:inset 0 0 0 8px var(--card-line),0 8px 0 var(--brown);padding:26px 26px 22px;box-sizing:border-box;display:flex;flex-direction:column">
       <div class="tabs" role="tablist"><button class="tab" data-tab="info" role="tab">Thông tin</button><button class="tab" data-tab="wallet" role="tab">Ví lì xì</button></div>
@@ -553,13 +553,13 @@ function profile(tab){
       <div style="font-family:var(--display);font-weight:800;font-size:22px;margin-top:16px">Thành tích</div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">${ach.map(a=>`<span class="ach ${a.on?'':'off'}"><i></i>${a.t}</span>`).join('')}</div>
       <div style="font-family:var(--display);font-weight:800;font-size:22px;margin-top:16px">Bạn bè hay chơi cùng</div>
-      <div style="display:flex;gap:14px;margin-top:6px">${[['Thảo Vy','av-girl'],['Quang','av-boy'],['Mai','kid']].map(([n,a])=>`<span class="pill" style="padding:4px 14px 4px 4px;background:#fff;box-shadow:inset 0 0 0 2px var(--tile-line);font-weight:800;font-size:14px">${a==='kid'?`<span style="width:36px;height:36px;border-radius:50%;background:#fff3d6 url(${KIDG}) 50% 8%/180% auto no-repeat;box-shadow:0 0 0 2px var(--gold)"></span>`:`<img src="assets/${a}.png" alt="" style="width:36px;height:36px;border-radius:50%;box-shadow:0 0 0 2px var(--gold)">`}${n}</span>`).join('')}</div>`}
+      <div style="display:flex;gap:14px;margin-top:6px">${[['Thảo Vy','av-girl'],['Quang','av-boy'],['Mai','kid']].map(([n,a])=>`<span class="pill" style="gap:10px;font-weight:800;font-size:16px;color:var(--ink)">${a==='kid'?`<span style="width:40px;height:40px;border-radius:50%;flex:none;background:#fff3d6 url(${KIDG}) 50% 8%/180% auto no-repeat;box-shadow:inset 0 0 0 2px var(--gold)"></span>`:`<img src="assets/${a}.png" alt="" style="width:40px;height:40px;border-radius:50%;object-fit:cover;outline:2px solid var(--gold);outline-offset:-2px">`}${n}</span>`).join('')}</div>`}
     else{tb.innerHTML=`<div class="dark" style="display:flex;align-items:center;gap:16px;padding:16px 22px;box-shadow:inset 0 0 0 3px var(--gold)">
-        <div style="display:flex;gap:4px">${'<i class="coin" style="width:30px;height:30px"></i>'.repeat(3)}</div>
+        <div style="display:flex;gap:0">${'<i class="coin" style="width:56px;height:56px;margin-right:-18px"></i>'.repeat(3)}<i style="width:18px;flex:none"></i></div>
         <div style="flex:1"><div style="font-weight:700;font-size:13px;color:var(--cream-2)">Số lì xì hiện có</div><div style="font-family:var(--display);font-weight:800;font-size:40px;line-height:1"><span data-bal>${S.balance}</span> lì xì</div><div style="font-size:12px;font-weight:700;color:var(--cream-2)">Dùng để đặt Bầu Cua và mua vé vào trận Ô Ăn Quan</div></div>
         <button class="btn orange" id="more">Nhận thêm</button></div>
       <div style="font-family:var(--display);font-weight:800;font-size:22px;margin:14px 0 8px">Lịch sử lì xì</div>
-      <div class="scroll" style="flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;padding-right:6px">${S.tx.map(x=>`<div class="txrow"><i class="coin"></i><div class="l"><b>${esc(x.label)}</b><span>${when(x.ts)}</span></div><div class="a ${x.amt>=0?'pos':'neg'}">${sgn(x.amt)} lì xì</div></div>`).join('')}</div>`;
+      <div class="scroll" style="flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;padding-right:6px">${S.tx.map(x=>`<div class="txrow"><i class="coin" style="width:24px;height:24px"></i><div class="l"><b>${esc(x.label)}</b><span>${when(x.ts)}</span></div><div class="a ${x.amt>=0?'pos':'neg'}">${sgn(x.amt)} lì xì</div></div>`).join('')}</div>`;
       $('#more',tb).onclick=lixiModal}};
   draw(tab);$$('.tab',el).forEach(b=>b.onclick=()=>draw(b.dataset.tab));
   $('#bk',el).onclick=home;$('#hSet',el).onclick=settingsModal;
@@ -733,7 +733,7 @@ function bcResult(win,res,net){
       ${win?'':`<div><div class="tile lose" style="position:relative;margin:0 auto;opacity:.8"><img class="art" src="assets/${BC.pick}.png" alt=""><span class="tag">−${BC.stakeUsed} lì xì</span></div><div style="font-family:var(--display);font-weight:800;font-size:22px;margin-top:8px">${ANn(BC.pick)}</div></div>`}
     </div>
     <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px"><i class="coin" style="width:40px;height:40px"></i><span style="font-family:var(--display);font-weight:800;font-size:34px;color:${win?'var(--green)':'var(--red)'}">${sgn(net)} lì xì</span><span style="font-family:var(--display);font-weight:700;font-size:16px;color:var(--ink-2)">· số dư ${S.balance} · +10 điểm cấp</span></div>
-    <div style="display:flex;justify-content:center;gap:16px;margin-top:10px">${BC.bots.map(x=>`<span class="pill" style="padding:4px 12px 4px 4px;background:var(--cream-2);font-weight:800;font-size:14px"><img src="assets/${x.av}.png" alt="" style="width:28px;height:28px;border-radius:50%"><span class="${x.last>0?'pos':'neg'}">${x.name} ${sgn(x.last)}</span></span>`).join('')}</div>
+    <div style="display:flex;justify-content:center;gap:16px;margin-top:10px">${BC.bots.map(x=>`<span class="pill" style="padding:4px 12px 4px 4px;background:var(--cream-2);font-weight:800;font-size:14px"><img src="assets/${x.av}.png" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover"><span class="${x.last>0?'pos':'neg'}">${x.name} ${sgn(x.last)}</span></span>`).join('')}</div>
     <div style="display:flex;justify-content:center;gap:16px;margin-top:20px"><button class="btn brown" id="lv" style="width:200px">Rời phòng</button><button class="btn orange" id="nx" style="width:240px">Ván tiếp</button></div></div>`);
   const m=modal(`Kết quả ván ${pad2(BC.round)}`,680,b,{closable:false});
   $('#lv',b).onclick=()=>{m.close();bcSummary()};
@@ -741,7 +741,7 @@ function bcResult(win,res,net){
 }
 function bcWait(win,net){
   BC.phase='wait';BC.round++;bcUI();
-  toast(win?`<i class="coin"></i>${sgn(net)} lì xì đã vào ví · +10 điểm cấp`:`${sgn(net)} lì xì · +10 điểm cấp`,!win);
+  toast(win?`<i class="coin" style="width:30px;height:30px"></i>${sgn(net)} lì xì đã vào ví · +10 điểm cấp`:`${sgn(net)} lì xì · +10 điểm cấp`,!win);
   let n=3;const tick=()=>{const hint=$('#hint');if(!hint)return;if(n>0){hint.textContent=`Ván ${pad2(BC.round)} bắt đầu sau ${n} giây...`;n--;later(tick,1000)}else bcNewRound()};tick();
 }
 function bcUpgrade(){
@@ -959,7 +959,7 @@ async function oqEnd(){
   const card=(img,nm,sc,hl)=>`<div style="width:160px;height:190px;border-radius:20px;background:var(--cream-2);box-shadow:inset 0 0 0 ${hl?'4px var(--gold)':'3px var(--tile-line)'}${hl?',0 0 18px rgba(242,179,61,.7)':''};display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:12px;box-sizing:border-box"><div style="width:140px;height:128px;background:url(${img}) 50% 20%/210% auto no-repeat"></div><div style="font-weight:800;font-size:13px;color:var(--ink-2)">${nm}</div><div style="font-family:var(--display);font-weight:800;font-size:24px;color:var(--title-red)">${sc} điểm</div></div>`;
   const body=h(`<div style="text-align:center"><div class="mtitle" style="color:${col};font-size:44px">${head}</div>
     <div style="display:flex;justify-content:center;align-items:center;gap:34px;margin-top:16px">${card(KIDB,g.names[0],a,res==='win')}<span style="font-family:var(--display);font-weight:800;font-size:34px;color:var(--red)">VS</span>${card(KIDG,g.names[1],b,res==='lose')}</div>
-    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;font-family:var(--display);font-weight:700;font-size:16px;color:var(--ink-2)">${g.mode==='ai'?'<i class="coin"></i>':''}${line}</div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;font-family:var(--display);font-weight:700;font-size:16px;color:var(--ink-2)">${g.mode==='ai'?'<i class="coin" style="width:28px;height:28px"></i>':''}${line}</div>
     <div style="display:flex;justify-content:center;gap:14px;margin-top:18px"><button class="btn brown" id="h" style="width:200px">Về trang chủ</button><button class="btn cream" id="m" style="width:200px">Đổi chế độ</button><button class="btn orange" id="r" style="width:180px">Đấu lại</button></div></div>`);
   const m=modal('Kết quả',700,body,{closable:false});
   $('#h',body).onclick=()=>{m.close();home()};$('#m',body).onclick=()=>{m.close();oqMenu()};
