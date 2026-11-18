@@ -334,12 +334,13 @@ const sign=(t,x,y,extra='')=>`<div class="sign abs ${extra}" style="left:${x}px;
 
 /* ---------- saved progress (this browser only) ---------- */
 const KEY='sanchoi-dangian-v2';
-const DEF=()=>({name:'Tuấn Anh',pid:String(100000+rnd(899999)),joined:new Date().toLocaleDateString('vi-VN',{month:'2-digit',year:'numeric'}),balance:12,xp:0,sound:true,music:false,vibrate:false,stake:1,
+const DEF=()=>({name:'Tuấn Anh',pid:String(100000+rnd(899999)),joined:new Date().toLocaleDateString('vi-VN',{month:'2-digit',year:'numeric'}),balance:12,xp:0,sound:true,music:true,vibrate:false,stake:1,
   tx:[{ts:Date.now(),amt:12,label:'Quà chào mừng bạn mới'}],
   stats:{bc:{rounds:0,wins:0,won:0},oq:{games:0,wins:0,draws:0,losses:0,quans:0}},
   checkin:{last:null,streak:0},daily:{day:today(),video:0,invite:false}});
 let S;
 try{S=Object.assign(DEF(),JSON.parse(localStorage.getItem(KEY)||'null')||{})}catch(e){S=DEF()}
+if(!S.musicV){S.music=true;S.musicV=2} /* music used to default to off; turn it on once for existing players */
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function daily(){if(!S.daily||S.daily.day!==today())S.daily={day:today(),video:0,invite:false};return S.daily}
 function addLixi(amt,label){S.balance+=amt;S.tx.unshift({ts:Date.now(),amt,label});S.tx=S.tx.slice(0,50);save();$$('[data-bal]').forEach(e=>e.textContent=S.balance)}
@@ -350,18 +351,53 @@ const STAKES=[{v:1,lv:1},{v:2,lv:4},{v:5,lv:6}];
 
 /* ---------- sound: synthesised, starts after the first tap ---------- */
 let AC=null;
-function ac(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume()}catch(e){}return AC}
+function ac(){try{if(!AC&&navigator.audioSession)try{navigator.audioSession.type='playback'}catch(e){} /* iPhone: play even with the silent switch on */
+  AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume()}catch(e){}return AC}
 function tone(f,d,type='sine',v=.12,at=0){if(!S.sound)return;const a=ac();if(!a)return;try{const t=a.currentTime+at,o=a.createOscillator(),g=a.createGain();o.type=type;o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(a.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
 const SFX={click:()=>tone(560,.07,'triangle',.09),tick:()=>tone(820+rnd(260),.05,'sine',.08),pick:()=>{tone(300,.09,'triangle',.1);tone(420,.08,'triangle',.07,.05)},
  cap:()=>[660,880,1100].forEach((f,i)=>tone(f,.14,'triangle',.1,i*.07)),coin:()=>{tone(988,.1,'square',.05);tone(1319,.3,'square',.05,.08)},
  win:()=>[523,659,784,1046].forEach((f,i)=>tone(f,.22,'triangle',.12,i*.12)),lose:()=>[392,330,262].forEach((f,i)=>tone(f,.3,'sine',.12,i*.18)),
  shake:()=>{for(let i=0;i<22;i++)tone(150+rnd(140),.05,'square',.03,i*.08)}};
-/* background music: a soft pentatonic loop */
-let musicT=null;const MEL=[523,587,659,784,880,784,659,587,523,440,523,587];
-function musicTick(i=0){if(!S.music)return;const a=ac();if(!a)return;try{const t=a.currentTime,o=a.createOscillator(),g=a.createGain();o.type='triangle';o.frequency.value=MEL[i%MEL.length]/2;g.gain.setValueAtTime(.035,t);g.gain.exponentialRampToValueAtTime(.0001,t+.5);o.connect(g).connect(a.destination);o.start(t);o.stop(t+.55)}catch(e){}musicT=setTimeout(()=>musicTick(i+1),420)}
-function setMusic(on){clearTimeout(musicT);if(on)musicTick()}
+/* background music: an original folk-style loop in the Vietnamese five-note scale (C D F G A),
+   scheduled on the AudioContext clock. 16 bars at 92 bpm (~42 s), then it repeats. */
+const MUS={on:false,bus:null,echo:null,timer:null,next:0,step:0,ev:null,noise:null};
+const NGU=[0,2,5,7,9],mtof=m=>440*Math.pow(2,(m-69)/12);
+const deg=d=>{const o=Math.floor(d/5),i=((d%5)+5)%5;return mtof(72+12*o+NGU[i])};
+const MEL=[ // [scale step, length in eighths]; step 0 = C5, 5 = C6, -1 = A4
+ [[3,2],[4,1],[3,1],[2,2],[1,2]],[[2,1],[3,1],[1,2],[0,4]],[[0,1],[1,1],[2,2],[3,2],[5,2]],[[4,2],[3,2],[4,4]],
+ [[5,2],[6,1],[5,1],[4,2],[3,2]],[[4,1],[5,1],[3,2],[2,4]],[[1,2],[2,1],[1,1],[0,2],[-1,2]],[[0,6]],
+ [[5,3],[6,1],[7,2],[6,2]],[[5,2],[4,2],[5,4]],[[3,2],[4,1],[5,1],[4,2],[3,2]],[[2,2],[1,2],[2,4]],
+ [[5,3],[6,1],[7,2],[8,2]],[[7,1],[6,1],[5,2],[4,4]],[[3,2],[2,1],[3,1],[1,2],[2,2]],[[0,6]]];
+const ROOTS=[0,7,5,0,5,7,0,0,5,0,7,0,5,0,7,0]; // C G F C F G C C | F C G C F C G C
+const EIGHTH=60/92/2;
+function songEvents(){const ev=[];MEL.forEach((bar,b)=>{let s=0;bar.forEach(([d,l])=>{ev.push({s:b*8+s,k:'m',f:deg(d),l});s+=l});
+  const r=ROOTS[b];ev.push({s:b*8,k:'b',f:mtof(36+r),v:1},{s:b*8+4,k:'b',f:mtof(43+r),v:.7},{s:b*8,k:'p',r});
+  ev.push({s:b*8+2,k:'w'},{s:b*8+6,k:'w'});[1,3,5,7].forEach(x=>ev.push({s:b*8+x,k:'h'}))});return ev}
+function noiseBuf(a){if(MUS.noise)return MUS.noise;const n=a.createBuffer(1,a.sampleRate*.2,a.sampleRate),d=n.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;return MUS.noise=n}
+function env(a,t,peak,att,dec){const g=a.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(peak,t+att);g.gain.exponentialRampToValueAtTime(.0001,t+att+dec);return g}
+const INST={
+ m(a,t,e){const dur=Math.min(1.6,e.l*EIGHTH+.9),g=env(a,t,.2,.006,dur),lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.value=3200;
+  const o1=a.createOscillator(),o2=a.createOscillator(),g2=a.createGain();o1.type='triangle';o2.type='sine';g2.gain.value=.35;
+  o1.frequency.setValueAtTime(e.f*.982,t);o1.frequency.linearRampToValueAtTime(e.f,t+.07); // small slide into the note, like a zither
+  o2.frequency.setValueAtTime(e.f*2,t);o1.connect(lp);o2.connect(g2).connect(lp);lp.connect(g);g.connect(MUS.bus);g.connect(MUS.echo);
+  [o1,o2].forEach(o=>{o.start(t);o.stop(t+dur+.05)})},
+ b(a,t,e){const g=env(a,t,.26*e.v,.01,.75),o=a.createOscillator();o.type='sine';o.frequency.value=e.f;o.connect(g).connect(MUS.bus);o.start(t);o.stop(t+.8)},
+ p(a,t,e){const len=EIGHTH*8,g=a.createGain(),lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.value=650;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.035,t+.5);g.gain.setValueAtTime(.035,t+len-.4);g.gain.linearRampToValueAtTime(0,t+len);
+  lp.connect(g).connect(MUS.bus);[48,55,62].forEach((m,i)=>{const o=a.createOscillator();o.type='sawtooth';o.frequency.value=mtof(m+e.r);o.detune.value=i*4-4;o.connect(lp);o.start(t);o.stop(t+len+.05)})},
+ w(a,t){const g=env(a,t,.13,.002,.09),o=a.createOscillator();o.type='sine';o.frequency.setValueAtTime(1150,t);o.frequency.exponentialRampToValueAtTime(760,t+.06);o.connect(g).connect(MUS.bus);o.start(t);o.stop(t+.12)},
+ h(a,t){const s=a.createBufferSource(),hp=a.createBiquadFilter(),g=env(a,t,.03,.002,.04);s.buffer=noiseBuf(a);hp.type='highpass';hp.frequency.value=6500;s.connect(hp).connect(g).connect(MUS.bus);s.start(t);s.stop(t+.06)}};
+function musicBus(a){if(MUS.bus)return;MUS.bus=a.createGain();MUS.bus.gain.value=0;MUS.bus.connect(a.destination);
+  const d=a.createDelay(1),fb=a.createGain(),wet=a.createGain();d.delayTime.value=EIGHTH*1.5;fb.gain.value=.22;wet.gain.value=.22;
+  MUS.echo=a.createGain();MUS.echo.connect(d);d.connect(fb).connect(d);d.connect(wet).connect(MUS.bus);MUS.ev=songEvents()}
+function musicPump(){const a=AC;if(!a||!MUS.on)return;const total=MEL.length*8;
+  while(MUS.next<a.currentTime+.15){const st=MUS.step%total;MUS.ev.forEach(e=>{if(e.s===st)try{INST[e.k](a,MUS.next,e)}catch(x){}});MUS.next+=EIGHTH;MUS.step++}}
+function setMusic(on){const a=on?ac():AC;if(!a)return;musicBus(a);const t=a.currentTime;MUS.bus.gain.cancelScheduledValues(t);MUS.bus.gain.setValueAtTime(MUS.bus.gain.value,t);
+  if(on){MUS.bus.gain.linearRampToValueAtTime(.75,t+1.2);if(!MUS.on){MUS.on=true;MUS.next=t+.08;MUS.step=0;clearInterval(MUS.timer);MUS.timer=setInterval(musicPump,25);musicPump()}}
+  else{MUS.bus.gain.linearRampToValueAtTime(0,t+.4);MUS.on=false;clearInterval(MUS.timer)}}
 function buzz(){if(S.vibrate&&navigator.vibrate)try{navigator.vibrate([60,40,120])}catch(e){}}
 let firstTap=true;
+document.addEventListener('visibilitychange',()=>{if(!AC)return;try{document.hidden?AC.suspend():AC.resume()}catch(e){}});
 document.addEventListener('pointerdown',e=>{if(firstTap){firstTap=false;ac();if(S.music)setMusic(true)}if(e.target.closest('button'))SFX.click()},true);
 
 /* ---------- scale stage to window ---------- */
