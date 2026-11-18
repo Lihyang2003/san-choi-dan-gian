@@ -2,7 +2,13 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Sân Chơi">
+<meta name="theme-color" content="#22361a">
+<link rel="apple-touch-icon" href="assets/coin.png">
 <meta name="description" content="Sân Chơi Dân Gian: chơi Bầu Cua Tôm Cá và Ô Ăn Quan ngay trên trình duyệt.">
 <link rel="icon" href="assets/coin.png">
 <title>Sân Chơi Dân Gian</title>
@@ -18,9 +24,10 @@
   --display:"Baloo 2","Nunito",system-ui,sans-serif; --body:"Nunito","Segoe UI",system-ui,sans-serif;
   color-scheme:light;
 }
-html,body{height:100%;margin:0}
+html,body{height:100%;margin:0;overflow:hidden;overscroll-behavior:none;touch-action:manipulation}
 body{background:#22361a;color:var(--ink);font-family:var(--body);overflow:hidden;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
-#app{position:fixed;inset:0;background:radial-gradient(ellipse at center,#3d5f27 0%,#1d2e15 100%)}
+#app{position:fixed;inset:0;overflow:hidden;box-sizing:border-box;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);background:radial-gradient(ellipse at center,#3d5f27 0%,#1d2e15 100%)}
+#app::before{content:"";position:absolute;inset:-40px;background:url(assets/bg-field.jpg) center/cover;filter:blur(22px) brightness(.55) saturate(1.1)}
 #stage{position:absolute;width:1280px;height:720px;overflow:hidden;background:var(--sand);box-shadow:0 20px 60px rgba(0,0,0,.45)}
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
 button:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:3px}
@@ -344,8 +351,18 @@ document.addEventListener('pointerdown',e=>{if(firstTap){firstTap=false;ac();if(
 
 /* ---------- scale stage to window ---------- */
 let rotateSkipped=false;
-function fit(){const w=innerWidth,hh=innerHeight,s=Math.min(w/1280,hh/720);stage.style.left=((w-1280*s)/2)+'px';stage.style.top=((hh-720*s)/2)+'px';stage.style.transformOrigin='0 0';stage.style.transform=`scale(${s})`;$('#rotate').classList.toggle('need',!rotateSkipped&&hh>w&&w<700)}
-$('#rotateSkip').onclick=()=>{rotateSkipped=true;fit()};addEventListener('resize',fit);fit();
+/* iOS Safari reports a stale innerWidth right after rotation, so measure the #app box itself and re-fit a few times */
+const appEl=$('#app');
+function fit(){const r=appEl.getBoundingClientRect(),cs=getComputedStyle(appEl),pl=parseFloat(cs.paddingLeft)||0,pr=parseFloat(cs.paddingRight)||0,pt=parseFloat(cs.paddingTop)||0,pb=parseFloat(cs.paddingBottom)||0;
+  const W=r.width||innerWidth,H=r.height||innerHeight,w=Math.max(1,W-pl-pr),hh=Math.max(1,H-pt-pb),s=Math.min(w/1280,hh/720);
+  stage.style.left=(pl+(w-1280*s)/2)+'px';stage.style.top=(pt+(hh-720*s)/2)+'px';stage.style.transformOrigin='0 0';stage.style.transform=`scale(${s})`;
+  $('#rotate').classList.toggle('need',!rotateSkipped&&H>W&&W<700)}
+function refit(){fit();requestAnimationFrame(fit);[120,300,600,1000].forEach(t=>setTimeout(fit,t))}
+$('#rotateSkip').onclick=()=>{rotateSkipped=true;fit()};
+addEventListener('resize',refit);addEventListener('orientationchange',refit);addEventListener('pageshow',refit);
+if(window.visualViewport)visualViewport.addEventListener('resize',refit);
+if(window.ResizeObserver)new ResizeObserver(fit).observe(appEl);
+fit();
 let toastT;function toast(msg,dark){const t=$('#toast');t.innerHTML=msg;t.classList.toggle('dk',!!dark);t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2400)}
 
 /* ---------- screen + modal manager ---------- */
