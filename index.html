@@ -28,7 +28,17 @@ html,body{height:100%;margin:0;overflow:hidden;overscroll-behavior:none;touch-ac
 body{background:#22361a;color:var(--ink);font-family:var(--body);overflow:hidden;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
 #app{position:fixed;inset:0;overflow:hidden;box-sizing:border-box;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);background:radial-gradient(ellipse at center,#3d5f27 0%,#1d2e15 100%)}
 #app::before{content:"";position:absolute;inset:-40px;background:url(assets/bg-field.jpg) center/cover;filter:blur(22px) brightness(.55) saturate(1.1)}
-#stage{position:absolute;width:1280px;height:720px;overflow:hidden;background:var(--sand);box-shadow:0 20px 60px rgba(0,0,0,.45)}
+#stage{position:absolute;width:1280px;height:720px;overflow:visible;--ext:0px}
+/* Wide phones: the 1280x720 Figma area stays centred; scene backgrounds continue into the side margins as a mirror of their own edges */
+.bg::before,.bg::after{content:"";position:absolute;top:0;bottom:0;width:var(--ext);transform:scaleX(-1);background:inherit;background-repeat:no-repeat}
+.bg::before{left:calc(-1*var(--ext))}
+.edgeL{translate:calc(-1*max(0px,var(--ext) - 6px)) 0}.edgeR{translate:max(0px,var(--ext) - 6px) 0}
+.bg::after{left:100%}
+#stage.wide .oqbg{-webkit-mask-image:linear-gradient(90deg,transparent,#000 70px,#000 calc(100% - 70px),transparent);mask-image:linear-gradient(90deg,transparent,#000 70px,#000 calc(100% - 70px),transparent)}
+.bg::before,.bg::after{background-size:1290px 720px}
+.bg::before{background-position:-5px 0}
+.bg::after{background-position:calc(var(--ext) - 1285px) 0}
+
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
 button:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:3px}
 img{display:block;max-width:none;-webkit-user-drag:none}
@@ -80,7 +90,7 @@ svg.i{fill:none;stroke:var(--cream);stroke-width:2.4;stroke-linecap:round;stroke
 .pchip .c .coin{width:16px;height:16px}
 
 /* modal (Figma: wood frame + cream body + sign) */
-.modal{position:absolute;inset:0;z-index:50;display:grid;place-items:center;background:rgba(42,26,12,.6);animation:fade .22s ease both}
+.modal{position:absolute;top:0;bottom:0;left:calc(-1*var(--ext));right:calc(-1*var(--ext));z-index:50;display:grid;place-items:center;background:rgba(42,26,12,.6);animation:fade .22s ease both}
 .modal.out{animation:fadeOut .2s ease forwards}
 @keyframes fade{from{opacity:0}}
 @keyframes fadeOut{to{opacity:0}}
@@ -314,7 +324,8 @@ const P={
  left:'<path d="M15 18l-6-6 6-6"/>', right:'<path d="M9 18l6-6-6-6"/>', play:'<path d="M6 3l14 9-14 9V3z"/>', clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'
 };
 const I=k=>`<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${P[k]}</svg>`;
-const ibtn=(id,k,label,x,y)=>`<button class="ibtn abs" id="${id}" aria-label="${label}" style="left:${x}px;top:${y}px">${I(k)}</button>`;
+const edge=x=>x<100?' edgeL':x>=1080?' edgeR':'';
+const ibtn=(id,k,label,x,y)=>`<button class="ibtn abs${edge(x)}" id="${id}" aria-label="${label}" style="left:${x}px;top:${y}px">${I(k)}</button>`;
 const sign=(t,x,y,extra='')=>`<div class="sign abs ${extra}" style="left:${x}px;top:${y}px"><b>${t}</b></div>`;
 
 /* ---------- saved progress (this browser only) ---------- */
@@ -355,7 +366,7 @@ let rotateSkipped=false;
 const appEl=$('#app');
 function fit(){const r=appEl.getBoundingClientRect(),cs=getComputedStyle(appEl),pl=parseFloat(cs.paddingLeft)||0,pr=parseFloat(cs.paddingRight)||0,pt=parseFloat(cs.paddingTop)||0,pb=parseFloat(cs.paddingBottom)||0;
   const W=r.width||innerWidth,H=r.height||innerHeight,w=Math.max(1,W-pl-pr),hh=Math.max(1,H-pt-pb),s=Math.min(w/1280,hh/720);
-  stage.style.left=(pl+(w-1280*s)/2)+'px';stage.style.top=(pt+(hh-720*s)/2)+'px';stage.style.transformOrigin='0 0';stage.style.transform=`scale(${s})`;
+  stage.style.left=(pl+(w-1280*s)/2)+'px';stage.style.top=(pt+(hh-720*s)/2)+'px';stage.style.transformOrigin='0 0';stage.style.transform=`scale(${s})`;const ext=Math.max(0,Math.ceil((w/s-1280)/2));stage.style.setProperty('--ext',(ext?ext+2:0)+'px');stage.classList.toggle('wide',ext>8);
   $('#rotate').classList.toggle('need',!rotateSkipped&&H>W&&W<700)}
 function refit(){fit();requestAnimationFrame(fit);[120,300,600,1000].forEach(t=>setTimeout(fit,t))}
 $('#rotateSkip').onclick=()=>{rotateSkipped=true;fit()};
@@ -401,7 +412,7 @@ function splash(){
 }
 
 /* ================= A1 · Home ================= */
-function profileChip(x,y){return `<div class="abs pill" style="left:${x}px;top:${y}px;height:61px;padding:6px 8px 6px 11px;box-sizing:border-box;background:var(--brown);box-shadow:inset 0 0 0 2.5px var(--gold),0 4px 0 var(--brown-xdk);gap:12px">
+function profileChip(x,y){return `<div class="abs pill${edge(x)}" style="left:${x}px;top:${y}px;height:61px;padding:6px 8px 6px 11px;box-sizing:border-box;background:var(--brown);box-shadow:inset 0 0 0 2.5px var(--gold),0 4px 0 var(--brown-xdk);gap:12px">
   <button class="pchip" id="me" aria-label="Mở hồ sơ"><img src="assets/av-me.png" alt=""><div style="text-align:left"><div class="n">${esc(S.name)}</div><div class="c"><i class="coin"></i><span data-bal>${S.balance}</span>&nbsp;lì xì</div></div></button>
   <button id="plus" aria-label="Nhận thêm lì xì" style="width:34px;height:34px;border-radius:50%;background:var(--gold);font-family:var(--display);font-weight:800;font-size:24px;line-height:1;color:var(--ink)">+</button></div>`}
 function home(){
@@ -584,11 +595,11 @@ function say(who,text){const box=$('#msgs');if(!box)return;const me=who==='me';c
   box.appendChild(h(sys?`<div class="msg sys"><span class="bub">${esc(text)}</span></div>`:`<div class="msg ${me?'me':''}"><img src="${av}" alt=""><div><div class="who">${nm}</div><span class="bub">${esc(text)}</span></div><span class="t">${hhmm()}</span></div>`));
   box.scrollTop=box.scrollHeight;if(!me&&!sys)SFX.tick()}
 function wireChat(el){$('#chatf',el).onsubmit=e=>{e.preventDefault();const i=$('#chatin',el);const v=i.value.trim();if(!v)return;say('me',v);i.value='';const b=pick(BOTS);later(()=>say(b.id,pick(LINES.reply)),900+rnd(900))}}
-function roomChip(id){return `<div class="abs pill" style="left:88px;top:22px;height:53px;padding:6px 20px 6px 10px;box-sizing:border-box;background:linear-gradient(#ffe9c2,#f7cf94);box-shadow:inset 0 0 0 2px var(--gold),0 4px 0 var(--cream-sh);gap:10px"><img src="assets/ic-users.png" alt="" style="width:32px;height:32px;object-fit:contain"><div style="line-height:1.1"><div style="font-weight:800;font-size:15px">Phòng bạn bè</div><div style="font-weight:700;font-size:12px;color:var(--ink-2)">ID: ${id}</div></div></div>`}
+function roomChip(id){return `<div class="abs pill edgeL" style="left:88px;top:22px;height:53px;padding:6px 20px 6px 10px;box-sizing:border-box;background:linear-gradient(#ffe9c2,#f7cf94);box-shadow:inset 0 0 0 2px var(--gold),0 4px 0 var(--cream-sh);gap:10px"><img src="assets/ic-users.png" alt="" style="width:32px;height:32px;object-fit:contain"><div style="line-height:1.1"><div style="font-weight:800;font-size:15px">Phòng bạn bè</div><div style="font-weight:700;font-size:12px;color:var(--ink-2)">ID: ${id}</div></div></div>`}
 function bcRoom(id){
   const el=h(`<div class="screen"><div class="bg"></div>
     ${ibtn('bk','back','Rời phòng',24,20)}${roomChip(id)}
-    <button class="ibtn abs" id="cp" aria-label="Sao chép mã phòng" style="left:276px;top:22px;width:46px;height:46px">${I('copy')}</button>
+    <button class="ibtn abs edgeL" id="cp" aria-label="Sao chép mã phòng" style="left:276px;top:22px;width:46px;height:46px">${I('copy')}</button>
     ${ibtn('hRules','help','Luật chơi',1148,20)}${ibtn('hSet','settings','Cài đặt',1208,20)}
     <div class="abs" style="left:30px;top:100px;width:880px;height:460px;border-radius:24px;background:#a8642f url(assets/wood.png) center/cover;box-shadow:0 10px 0 rgba(74,42,18,.6)"></div>
     <div id="seats"></div>
@@ -845,7 +856,7 @@ function pebHTML(pos,n){
 function oqStart(mode,diff){
   G={mode,diff,s:oqInit(),turn:0,busy:false,sel:null,moves:0};
   const N=mode==='ai'?['Bạn','Mai']:['Người 1','Người 2'];G.names=N;
-  const el=h(`<div class="screen"><div class="oqbg"></div>
+  const el=h(`<div class="screen"><div class="bg"></div><div class="oqbg"></div>
     ${ibtn('bk','back','Rời ván',24,20)}${headerRight()}
     <div class="abs" style="left:248px;top:112px;width:190px;text-align:center;font-family:var(--display);font-weight:800;font-size:34px;line-height:36px;color:var(--title-red);text-transform:uppercase">Ô Ăn Quan</div>
     <div class="portrait" style="left:573px;top:12px;height:142px;background-image:url(${KIDG});background-size:268px 283px;background-position:-59px -36px"></div>
