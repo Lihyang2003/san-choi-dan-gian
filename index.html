@@ -33,6 +33,9 @@ body{background:#22361a;color:var(--ink);font-family:var(--body);overflow:hidden
 .bg::before,.bg::after{content:"";position:absolute;top:0;bottom:0;width:var(--ext);transform:scaleX(-1);background:inherit;background-repeat:no-repeat}
 .bg::before{left:calc(-1*var(--ext))}
 .edgeL{translate:calc(-1*max(0px,var(--ext) - 6px)) 0}.edgeR{translate:max(0px,var(--ext) - 6px) 0}
+/* Short phone screens: corner controls grow about the screen corner (--k), popups grow to fill the height (set per popup in fitModal) */
+.edgeL,.edgeR{transform-origin:var(--ox,0) var(--oy,0);scale:var(--k,1)}
+#toast{scale:var(--k,1);transform-origin:50% 0}
 .bg::after{left:100%}
 #stage.wide .oqbg{-webkit-mask-image:linear-gradient(90deg,transparent,#000 70px,#000 calc(100% - 70px),transparent);mask-image:linear-gradient(90deg,transparent,#000 70px,#000 calc(100% - 70px),transparent)}
 .bg::before,.bg::after{background-size:1290px 720px}
@@ -325,7 +328,8 @@ const P={
 };
 const I=k=>`<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${P[k]}</svg>`;
 const edge=x=>x<100?' edgeL':x>=1080?' edgeR':'';
-const ibtn=(id,k,label,x,y)=>`<button class="ibtn abs${edge(x)}" id="${id}" aria-label="${label}" style="left:${x}px;top:${y}px">${I(k)}</button>`;
+const eo=(x,y)=>x<100?`--ox:${-x}px;--oy:${-y}px;`:x>=1080?`--ox:${1280-x}px;--oy:${-y}px;`:'';
+const ibtn=(id,k,label,x,y)=>`<button class="ibtn abs${edge(x)}" id="${id}" aria-label="${label}" style="${eo(x,y)}left:${x}px;top:${y}px">${I(k)}</button>`;
 const sign=(t,x,y,extra='')=>`<div class="sign abs ${extra}" style="left:${x}px;top:${y}px"><b>${t}</b></div>`;
 
 /* ---------- saved progress (this browser only) ---------- */
@@ -362,11 +366,16 @@ document.addEventListener('pointerdown',e=>{if(firstTap){firstTap=false;ac();if(
 
 /* ---------- scale stage to window ---------- */
 let rotateSkipped=false;
+const FIT={s:1,ext:0,k:1};
+/* grow a popup toward ~0.8 of real size on short screens, limited by the space it has */
+function fitModal(m){const f=$('.frame',m);if(!f)return;const w=f.offsetWidth,hgt=f.offsetHeight+44;const want=Math.max(1,Math.min(0.8/FIT.s,2.2));const km=Math.max(1,Math.min(want,680/hgt,(1280+2*FIT.ext-40)/w));f.style.scale=km.toFixed(3)}
 /* iOS Safari reports a stale innerWidth right after rotation, so measure the #app box itself and re-fit a few times */
 const appEl=$('#app');
 function fit(){const r=appEl.getBoundingClientRect(),cs=getComputedStyle(appEl),pl=parseFloat(cs.paddingLeft)||0,pr=parseFloat(cs.paddingRight)||0,pt=parseFloat(cs.paddingTop)||0,pb=parseFloat(cs.paddingBottom)||0;
   const W=r.width||innerWidth,H=r.height||innerHeight,w=Math.max(1,W-pl-pr),hh=Math.max(1,H-pt-pb),s=Math.min(w/1280,hh/720);
   stage.style.left=(pl+(w-1280*s)/2)+'px';stage.style.top=(pt+(hh-720*s)/2)+'px';stage.style.transformOrigin='0 0';stage.style.transform=`scale(${s})`;const ext=Math.max(0,Math.ceil((w/s-1280)/2));stage.style.setProperty('--ext',(ext?ext+2:0)+'px');stage.classList.toggle('wide',ext>8);
+  /* target ~32pt corner buttons; never grow past what the side margin can hold */
+  FIT.s=s;FIT.ext=ext;FIT.k=Math.max(1,Math.min(0.62/s,1.6,1+ext/240));stage.style.setProperty('--k',FIT.k.toFixed(3));$$('.modal',stage).forEach(fitModal);
   $('#rotate').classList.toggle('need',!rotateSkipped&&H>W&&W<700)}
 function refit(){fit();requestAnimationFrame(fit);[120,300,600,1000].forEach(t=>setTimeout(fit,t))}
 $('#rotateSkip').onclick=()=>{rotateSkipped=true;fit()};
@@ -374,7 +383,9 @@ addEventListener('resize',refit);addEventListener('orientationchange',refit);add
 if(window.visualViewport)visualViewport.addEventListener('resize',refit);
 if(window.ResizeObserver)new ResizeObserver(fit).observe(appEl);
 fit();
-let toastT;function toast(msg,dark){const t=$('#toast');t.innerHTML=msg;t.classList.toggle('dk',!!dark);t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2400)}
+let toastT;function toast(msg,dark,ms=2400){const t=$('#toast');t.innerHTML=msg;t.classList.toggle('dk',!!dark);t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),ms)}
+/* iPhone Safari keeps its bars in landscape; a home-screen launch gives ~1.5x more height. Tell the player once. */
+function homeScreenTip(){try{const ios=/iPhone|iPod/.test(navigator.userAgent);if(!ios||navigator.standalone||FIT.s>0.45||localStorage.getItem('sanchoi-tip'))return;localStorage.setItem('sanchoi-tip','1');setTimeout(()=>toast('Mẹo: bấm Chia sẻ → Thêm vào MH chính để chơi toàn màn hình',1,6000),900)}catch(e){}}
 
 /* ---------- screen + modal manager ---------- */
 let cur=null,timers=[];
@@ -386,7 +397,7 @@ function modal(title,w,body,{onClose,closable=true}={}){
   const close=()=>{if(m.classList.contains('out'))return;m.classList.add('out');setTimeout(()=>m.remove(),220);onClose&&onClose()};
   m.close=close;
   if(closable){const x=h(`<button class="ibtn x" aria-label="Đóng">${I('close')}</button>`);x.onclick=close;$('.frame',m).appendChild(x);m.addEventListener('pointerdown',e=>{if(e.target===m)close()})}
-  stage.insertBefore(m,$('#toast'));return m}
+  stage.insertBefore(m,$('#toast'));fitModal(m);if(window.ResizeObserver)new ResizeObserver(()=>fitModal(m)).observe($('.frame',m));return m}
 function closeAll(){$$('.modal',stage).forEach(m=>m.close?m.close():m.remove())}
 function confetti(){const c=h('<div class="confetti"></div>');const cols=['#f06b4a','#5e9e45','#f2b33d','#fff3dc','#5aa9e6','#b23a26'];for(let i=0;i<70;i++){const p=document.createElement('i');p.style.left=rnd(1280)+'px';p.style.background=cols[i%cols.length];p.style.animationDelay=(Math.random()*.8)+'s';p.style.animationDuration=(1.8+Math.random()*1.4)+'s';c.appendChild(p)}stage.appendChild(c);setTimeout(()=>c.remove(),3600)}
 function burstHTML(){let s='';for(let i=0;i<10;i++){const a=i/10*Math.PI*2;s+=`<span style="--x:${Math.cos(a)*120}px;--y:${Math.sin(a)*60}px;animation-delay:${.15+i*.02}s"></span>`}return `<div class="burst">${s}<div class="c0"></div></div>`}
@@ -412,10 +423,11 @@ function splash(){
 }
 
 /* ================= A1 · Home ================= */
-function profileChip(x,y){return `<div class="abs pill${edge(x)}" style="left:${x}px;top:${y}px;height:61px;padding:6px 8px 6px 11px;box-sizing:border-box;background:var(--brown);box-shadow:inset 0 0 0 2.5px var(--gold),0 4px 0 var(--brown-xdk);gap:12px">
+function profileChip(x,y){return `<div class="abs pill${edge(x)}" style="${eo(x,y)}left:${x}px;top:${y}px;height:61px;padding:6px 8px 6px 11px;box-sizing:border-box;background:var(--brown);box-shadow:inset 0 0 0 2.5px var(--gold),0 4px 0 var(--brown-xdk);gap:12px">
   <button class="pchip" id="me" aria-label="Mở hồ sơ"><img src="assets/av-me.png" alt=""><div style="text-align:left"><div class="n">${esc(S.name)}</div><div class="c"><i class="coin"></i><span data-bal>${S.balance}</span>&nbsp;lì xì</div></div></button>
   <button id="plus" aria-label="Nhận thêm lì xì" style="width:34px;height:34px;border-radius:50%;background:var(--gold);font-family:var(--display);font-weight:800;font-size:24px;line-height:1;color:var(--ink)">+</button></div>`}
 function home(){
+  homeScreenTip();
   const el=h(`<div class="screen"><div class="bg"></div>
     ${profileChip(24,20)}
     ${ibtn('hSet','settings','Cài đặt',1208,20)}
@@ -595,11 +607,11 @@ function say(who,text){const box=$('#msgs');if(!box)return;const me=who==='me';c
   box.appendChild(h(sys?`<div class="msg sys"><span class="bub">${esc(text)}</span></div>`:`<div class="msg ${me?'me':''}"><img src="${av}" alt=""><div><div class="who">${nm}</div><span class="bub">${esc(text)}</span></div><span class="t">${hhmm()}</span></div>`));
   box.scrollTop=box.scrollHeight;if(!me&&!sys)SFX.tick()}
 function wireChat(el){$('#chatf',el).onsubmit=e=>{e.preventDefault();const i=$('#chatin',el);const v=i.value.trim();if(!v)return;say('me',v);i.value='';const b=pick(BOTS);later(()=>say(b.id,pick(LINES.reply)),900+rnd(900))}}
-function roomChip(id){return `<div class="abs pill edgeL" style="left:88px;top:22px;height:53px;padding:6px 20px 6px 10px;box-sizing:border-box;background:linear-gradient(#ffe9c2,#f7cf94);box-shadow:inset 0 0 0 2px var(--gold),0 4px 0 var(--cream-sh);gap:10px"><img src="assets/ic-users.png" alt="" style="width:32px;height:32px;object-fit:contain"><div style="line-height:1.1"><div style="font-weight:800;font-size:15px">Phòng bạn bè</div><div style="font-weight:700;font-size:12px;color:var(--ink-2)">ID: ${id}</div></div></div>`}
+function roomChip(id){return `<div class="abs pill edgeL" style="--ox:-88px;--oy:-22px;left:88px;top:22px;height:53px;padding:6px 20px 6px 10px;box-sizing:border-box;background:linear-gradient(#ffe9c2,#f7cf94);box-shadow:inset 0 0 0 2px var(--gold),0 4px 0 var(--cream-sh);gap:10px"><img src="assets/ic-users.png" alt="" style="width:32px;height:32px;object-fit:contain"><div style="line-height:1.1"><div style="font-weight:800;font-size:15px">Phòng bạn bè</div><div style="font-weight:700;font-size:12px;color:var(--ink-2)">ID: ${id}</div></div></div>`}
 function bcRoom(id){
   const el=h(`<div class="screen"><div class="bg"></div>
     ${ibtn('bk','back','Rời phòng',24,20)}${roomChip(id)}
-    <button class="ibtn abs edgeL" id="cp" aria-label="Sao chép mã phòng" style="left:276px;top:22px;width:46px;height:46px">${I('copy')}</button>
+    <button class="ibtn abs edgeL" id="cp" aria-label="Sao chép mã phòng" style="--ox:-276px;--oy:-22px;left:276px;top:22px;width:46px;height:46px">${I('copy')}</button>
     ${ibtn('hRules','help','Luật chơi',1148,20)}${ibtn('hSet','settings','Cài đặt',1208,20)}
     <div class="abs" style="left:30px;top:100px;width:880px;height:460px;border-radius:24px;background:#a8642f url(assets/wood.png) center/cover;box-shadow:0 10px 0 rgba(74,42,18,.6)"></div>
     <div id="seats"></div>
