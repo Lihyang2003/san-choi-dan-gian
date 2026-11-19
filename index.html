@@ -27,20 +27,14 @@
 html,body{height:100%;margin:0;overflow:hidden;overscroll-behavior:none;touch-action:manipulation}
 body{background:#22361a;color:var(--ink);font-family:var(--body);overflow:hidden;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
 #app{position:fixed;inset:0;overflow:hidden;box-sizing:border-box;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);background:radial-gradient(ellipse at center,#3d5f27 0%,#1d2e15 100%)}
-#app::before{content:"";position:absolute;inset:-40px;background:url(assets/bg-field.jpg) center/cover;filter:blur(22px) brightness(.55) saturate(1.1)}
+#app::before{content:"";position:absolute;inset:-40px;background:url(assets/bg-field.jpg?v=3) center/cover;filter:blur(22px) brightness(.55) saturate(1.1)}
 #stage{position:absolute;width:1280px;height:720px;overflow:visible;--ext:0px}
-/* Wide phones: the 1280x720 Figma area stays centred; scene backgrounds continue into the side margins as a mirror of their own edges */
-.bg::before,.bg::after{content:"";position:absolute;top:0;bottom:0;width:var(--ext);transform:scaleX(-1);background:inherit;background-repeat:no-repeat}
-.bg::before{left:calc(-1*var(--ext))}
+/* Wide phones: the 1280x720 Figma area stays centred; the scene background (.bg) is simply enlarged to cover the whole screen */
 .edgeL{translate:calc(-1*max(0px,var(--ext) - 6px)) 0}.edgeR{translate:max(0px,var(--ext) - 6px) 0}
 /* Short phone screens: corner controls grow about the screen corner (--k), popups grow to fill the height (set per popup in fitModal) */
 .edgeL,.edgeR{transform-origin:var(--ox,0) var(--oy,0);scale:var(--k,1)}
 #toast{scale:var(--k,1);transform-origin:50% 0}
-.bg::after{left:100%}
 #stage.wide .oqbg{-webkit-mask-image:linear-gradient(90deg,transparent,#000 70px,#000 calc(100% - 70px),transparent);mask-image:linear-gradient(90deg,transparent,#000 70px,#000 calc(100% - 70px),transparent)}
-.bg::before,.bg::after{background-size:1290px 720px}
-.bg::before{background-position:-5px 0}
-.bg::after{background-position:calc(var(--ext) - 1285px) 0}
 
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
 button:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:3px}
@@ -51,7 +45,7 @@ img{display:block;max-width:none;-webkit-user-drag:none}
 .screen.out{animation:scrOut .3s ease forwards;pointer-events:none}
 @keyframes scrIn{from{opacity:0;transform:scale(1.03)}to{opacity:1;transform:none}}
 @keyframes scrOut{to{opacity:0;transform:scale(.98)}}
-.bg{position:absolute;inset:0;background:var(--sand) url(assets/bg-field.jpg) center/cover}
+.bg{position:absolute;top:0;bottom:0;left:calc(-1*var(--ext));right:calc(-1*var(--ext));background:var(--sand) url(assets/bg-field.jpg?v=3) center/cover}
 .oqbg{position:absolute;inset:0;background:var(--sand) url(assets/oq-board.jpg) no-repeat;background-size:1300px 731px;background-position:-9px -7px}
 
 /* buttons (Figma: btn / Kind=Orange|Brown|Cream|Disabled) */
@@ -447,8 +441,8 @@ function splash(){
   const el=h(`<div class="screen"><div class="bg"></div>
     ${[[300,120],[930,96],[360,250],[880,236],[600,60],[1040,170],[200,200]].map(([x,y],i)=>`<i class="spark" style="left:${x}px;top:${y}px;animation-delay:${i*.25}s"></i>`).join('')}
     ${kid(KIDG,110,330,300,370,'bobA')}${kid(KIDB,870,224,320,400,'bobB')}
-    <div class="abs" style="left:320px;top:20px;width:640px;text-align:center">
-      <img class="sway" src="assets/logo.png?v=2" alt="Về Thăm Nhà Ngoại" style="display:block;width:260px;height:254px;margin:16px auto 0;filter:drop-shadow(0 6px 10px rgba(77,41,13,.28))">
+    <div class="abs" style="left:320px;top:14px;width:640px;text-align:center">
+      <img class="sway" src="assets/logo.png?v=2" alt="Về Thăm Nhà Ngoại" style="display:block;width:400px;height:390px;margin:6px auto 0;filter:drop-shadow(0 6px 10px rgba(77,41,13,.28))">
       <div><span class="pill" style="margin-top:14px;padding:8px 22px;background:var(--brown);box-shadow:inset 0 0 0 2px var(--gold);font-family:var(--display);font-weight:700;font-size:16px;color:var(--cream)">Bầu Cua Tôm Cá &nbsp;·&nbsp; Ô Ăn Quan</span></div>
     </div>
     <div class="abs" id="ld" style="left:410px;top:600px;width:460px;text-align:center"><div class="lbar"><i id="lb"></i></div><div style="margin-top:10px;font-family:var(--display);font-weight:700;font-size:16px;color:var(--ink)" id="lt">Đang tải sân chơi… 0%</div></div>
@@ -538,7 +532,7 @@ function rewardModal(amt,before,title,extra=''){
   const m=modal('Nhận thưởng',560,b,{closable:false});$('#ok',b).onclick=()=>m.close();
 }
 function videoModal(){
-  const b=h(`<div style="text-align:center"><div style="position:relative;height:250px;border-radius:18px;overflow:hidden;background:#2e4a1f url(assets/bg-field.jpg) center/cover">
+  const b=h(`<div style="text-align:center"><div style="position:relative;height:250px;border-radius:18px;overflow:hidden;background:#2e4a1f url(assets/bg-field.jpg?v=3) center/cover">
       <img src="assets/bowl.png" alt="" class="bobA" style="position:absolute;left:50%;top:60px;width:200px;margin-left:-100px">
       <span class="pill" style="position:absolute;left:14px;top:12px;padding:4px 12px;background:rgba(91,52,23,.85);color:var(--cream);font-weight:800;font-size:12px">Video minh họa · bản demo</span>
       <span style="position:absolute;right:14px;top:12px;width:44px;height:44px;border-radius:50%;background:rgba(91,52,23,.85);color:var(--cream);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:22px" id="cd">3</span>
