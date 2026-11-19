@@ -447,8 +447,8 @@ function splash(){
   const el=h(`<div class="screen"><div class="bg"></div>
     ${[[300,120],[930,96],[360,250],[880,236],[600,60],[1040,170],[200,200]].map(([x,y],i)=>`<i class="spark" style="left:${x}px;top:${y}px;animation-delay:${i*.25}s"></i>`).join('')}
     ${kid(KIDG,110,330,300,370,'bobA')}${kid(KIDB,870,224,320,400,'bobB')}
-    <div class="abs" style="left:320px;top:110px;width:640px;text-align:center">
-      <div class="sign sway" style="padding:14px 18px;border-radius:26px"><b style="font-size:58px;line-height:76px;padding:12px 44px;border-radius:16px">Sân Chơi Dân Gian</b></div>
+    <div class="abs" style="left:320px;top:20px;width:640px;text-align:center">
+      <img class="sway" src="assets/logo.png" alt="Về Thăm Nhà Ngoại" style="display:block;width:260px;height:254px;margin:16px auto 0;filter:drop-shadow(0 6px 10px rgba(77,41,13,.28))">
       <div><span class="pill" style="margin-top:14px;padding:8px 22px;background:var(--brown);box-shadow:inset 0 0 0 2px var(--gold);font-family:var(--display);font-weight:700;font-size:16px;color:var(--cream)">Bầu Cua Tôm Cá &nbsp;·&nbsp; Ô Ăn Quan</span></div>
     </div>
     <div class="abs" style="left:410px;top:600px;text-align:center"><div class="lbar"><i id="lb"></i></div><div style="margin-top:10px;font-family:var(--display);font-weight:700;font-size:16px;color:var(--ink)" id="lt">Đang tải sân chơi… 0%</div></div>
