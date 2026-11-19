@@ -8,9 +8,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Sân Chơi">
 <meta name="theme-color" content="#22361a">
-<link rel="apple-touch-icon" href="assets/coin.png">
+<link rel="apple-touch-icon" href="assets/coin.png?v=2">
 <meta name="description" content="Sân Chơi Dân Gian: chơi Bầu Cua Tôm Cá và Ô Ăn Quan ngay trên trình duyệt.">
-<link rel="icon" href="assets/coin.png">
+<link rel="icon" href="assets/coin.png?v=2">
 <title>Sân Chơi Dân Gian</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -79,7 +79,7 @@ svg.i{fill:none;stroke:var(--cream);stroke-width:2.4;stroke-linecap:round;stroke
 .sign{display:inline-flex;padding:10px 12px;border-radius:20px;background:linear-gradient(#b9773d,#8a4d22);box-shadow:inset 0 0 0 3px var(--brown-dk),0 5px 0 var(--brown-xdk),0 10px 16px rgba(0,0,0,.2)}
 .sign b{display:block;padding:6px 26px;border-radius:12px;background:linear-gradient(#fce3b6,#f3c27f);box-shadow:inset 0 2px 3px rgba(122,66,32,.35);font-family:var(--display);font-weight:800;font-size:34px;line-height:36px;color:var(--title-red);text-transform:uppercase;white-space:nowrap}
 .pill{display:inline-flex;align-items:center;gap:8px;border-radius:999px}
-.coin{width:20px;height:20px;border-radius:50%;background:url(assets/coin.png) center/cover no-repeat;flex:none}
+.coin{width:20px;height:20px;border-radius:50%;background:url(assets/coin.png?v=2) center/cover no-repeat;flex:none}
 
 /* panels */
 .dark{background:var(--brown-dk);border-radius:30px;box-shadow:inset 0 0 0 6px var(--gold);color:var(--cream)}
@@ -269,9 +269,9 @@ svg.i{fill:none;stroke:var(--cream);stroke-width:2.4;stroke-linecap:round;stroke
 .streak div.got{background:#e9f3dd;box-shadow:inset 0 0 0 2px #a9cf8f}
 .streak div.today{box-shadow:inset 0 0 0 3px var(--red)}
 .burst{position:relative;height:120px;display:grid;place-items:center}
-.burst .c0{width:84px;height:84px;border-radius:50%;background:url(assets/coin.png) center/cover no-repeat;animation:spin .8s cubic-bezier(.3,1.5,.5,1) both;filter:drop-shadow(0 6px 5px rgba(120,70,0,.35))}
+.burst .c0{width:84px;height:84px;border-radius:50%;background:url(assets/coin.png?v=2) center/cover no-repeat;animation:spin .8s cubic-bezier(.3,1.5,.5,1) both;filter:drop-shadow(0 6px 5px rgba(120,70,0,.35))}
 @keyframes spin{from{transform:scale(.2) rotateY(540deg)}}
-.burst span{position:absolute;width:24px;height:24px;border-radius:50%;background:url(assets/coin.png) center/cover no-repeat;animation:burst 1s ease-out both}
+.burst span{position:absolute;width:24px;height:24px;border-radius:50%;background:url(assets/coin.png?v=2) center/cover no-repeat;animation:burst 1s ease-out both}
 @keyframes burst{from{transform:translate(0,0) scale(.4);opacity:1}to{transform:translate(var(--x),var(--y)) scale(1);opacity:0}}
 .confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:70}
 .confetti i{position:absolute;top:-20px;width:12px;height:18px;border-radius:3px;animation:conf 2.4s linear forwards}
@@ -448,19 +448,20 @@ function splash(){
     ${[[300,120],[930,96],[360,250],[880,236],[600,60],[1040,170],[200,200]].map(([x,y],i)=>`<i class="spark" style="left:${x}px;top:${y}px;animation-delay:${i*.25}s"></i>`).join('')}
     ${kid(KIDG,110,330,300,370,'bobA')}${kid(KIDB,870,224,320,400,'bobB')}
     <div class="abs" style="left:320px;top:20px;width:640px;text-align:center">
-      <img class="sway" src="assets/logo.png" alt="Về Thăm Nhà Ngoại" style="display:block;width:260px;height:254px;margin:16px auto 0;filter:drop-shadow(0 6px 10px rgba(77,41,13,.28))">
+      <img class="sway" src="assets/logo.png?v=2" alt="Về Thăm Nhà Ngoại" style="display:block;width:260px;height:254px;margin:16px auto 0;filter:drop-shadow(0 6px 10px rgba(77,41,13,.28))">
       <div><span class="pill" style="margin-top:14px;padding:8px 22px;background:var(--brown);box-shadow:inset 0 0 0 2px var(--gold);font-family:var(--display);font-weight:700;font-size:16px;color:var(--cream)">Bầu Cua Tôm Cá &nbsp;·&nbsp; Ô Ăn Quan</span></div>
     </div>
-    <div class="abs" style="left:410px;top:600px;text-align:center"><div class="lbar"><i id="lb"></i></div><div style="margin-top:10px;font-family:var(--display);font-weight:700;font-size:16px;color:var(--ink)" id="lt">Đang tải sân chơi… 0%</div></div>
+    <div class="abs" id="ld" style="left:410px;top:600px;width:460px;text-align:center"><div class="lbar"><i id="lb"></i></div><div style="margin-top:10px;font-family:var(--display);font-weight:700;font-size:16px;color:var(--ink)" id="lt">Đang tải sân chơi… 0%</div></div>
   </div>`);
   go(el);
-  let p=0;const step=()=>{p=Math.min(100,p+7+rnd(12));const lb=$('#lb');if(!lb)return;lb.style.width=p+'%';$('#lt').textContent=`Đang tải sân chơi… ${p}%`;if(p<100)later(step,140);else later(home,450)};later(step,300);
-  el.onclick=()=>home();
+  let p=0;const step=()=>{p=Math.min(100,p+7+rnd(12));const lb=$('#lb');if(!lb)return;lb.style.width=p+'%';$('#lt').textContent=`Đang tải sân chơi… ${p}%`;if(p<100)later(step,140);else later(ready,350)};later(step,300);
+  /* Loading finishes → wait for the player to press "Bắt đầu" before going to the home screen */
+  const ready=()=>{const ld=$('#ld');if(!ld)return;ld.style.top='588px';ld.innerHTML='<div class="play"><button class="btn orange" id="goHome" style="width:260px;height:60px">Bắt đầu</button></div>';const b=$('#goHome',ld);b.onclick=()=>home();b.focus({preventScroll:true})};
 }
 
 /* ================= A1 · Home ================= */
 function profileChip(x,y){return `<div class="abs pill${edge(x)}" style="${eo(x,y)}left:${x}px;top:${y}px;height:61px;padding:6px 8px 6px 11px;box-sizing:border-box;background:var(--brown);box-shadow:inset 0 0 0 2.5px var(--gold),0 4px 0 var(--brown-xdk);gap:12px">
-  <button class="pchip" id="me" aria-label="Mở hồ sơ"><img src="assets/av-me.png" alt=""><div style="text-align:left"><div class="n">${esc(S.name)}</div><div class="c"><i class="coin"></i><span data-bal>${S.balance}</span>&nbsp;lì xì</div></div></button>
+  <button class="pchip" id="me" aria-label="Mở hồ sơ"><img src="assets/av-me.png?v=2" alt=""><div style="text-align:left"><div class="n">${esc(S.name)}</div><div class="c"><i class="coin"></i><span data-bal>${S.balance}</span>&nbsp;lì xì</div></div></button>
   <button id="plus" aria-label="Nhận thêm lì xì" style="width:34px;height:34px;border-radius:50%;background:var(--gold);font-family:var(--display);font-weight:800;font-size:24px;line-height:1;color:var(--ink)">+</button></div>`}
 function home(){
   homeScreenTip();
@@ -565,7 +566,7 @@ function profile(tab){
     ${ibtn('bk','back','Về trang chủ',24,20)}${ibtn('hSet','settings','Cài đặt',1208,20)}
     <div class="abs" style="left:0;right:0;top:20px;text-align:center;pointer-events:none"><div class="sign"><b>Hồ sơ của bạn</b></div></div>
     <div class="abs" style="left:44px;top:126px;width:370px;height:560px;border-radius:30px;background:var(--cream-3);box-shadow:inset 0 0 0 8px var(--card-line),0 8px 0 var(--brown);text-align:center;padding:40px 34px;box-sizing:border-box">
-      <img src="assets/av-me.png" alt="" style="width:130px;height:130px;border-radius:50%;margin:-5px auto 0;object-fit:cover;outline:5px solid var(--gold);outline-offset:-5px;box-shadow:0 6px 0 rgba(122,66,32,.5)">
+      <img src="assets/av-me.png?v=2" alt="" style="width:130px;height:130px;border-radius:50%;margin:-5px auto 0;object-fit:cover;outline:5px solid var(--gold);outline-offset:-5px;box-shadow:0 6px 0 rgba(122,66,32,.5)">
       <div id="nb" style="margin-top:14px"><div style="font-family:var(--display);font-weight:800;font-size:34px;line-height:1.1;color:var(--ink);word-break:break-word">${esc(S.name)}</div></div>
       <div class="p" style="font-size:12px;font-weight:700">ID: ${S.pid} · tham gia ${S.joined}</div>
       <div style="margin-top:8px"><span class="pill" style="padding:2px 12px;background:var(--coin);font-weight:900;font-size:13px">Cấp ${lv}</span> <button id="edit" class="pill" style="padding:2px 12px;background:#f0dcb4;font-weight:800;font-size:13px">Đổi tên</button></div>
@@ -589,7 +590,7 @@ function profile(tab){
       <div style="font-family:var(--display);font-weight:800;font-size:22px;margin-top:16px">Thành tích</div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">${ach.map(a=>`<span class="ach ${a.on?'':'off'}"><i></i>${a.t}</span>`).join('')}</div>
       <div style="font-family:var(--display);font-weight:800;font-size:22px;margin-top:16px">Bạn bè hay chơi cùng</div>
-      <div style="display:flex;gap:14px;margin-top:6px">${[['Thảo Vy','av-girl'],['Quang','av-boy'],['Mai','kid']].map(([n,a])=>`<span class="pill" style="gap:10px;font-weight:800;font-size:16px;color:var(--ink)">${a==='kid'?`<span style="width:40px;height:40px;border-radius:50%;flex:none;background:#fff3d6 url(${KIDG}) 50% 8%/180% auto no-repeat;box-shadow:inset 0 0 0 2px var(--gold)"></span>`:`<img src="assets/${a}.png" alt="" style="width:40px;height:40px;border-radius:50%;object-fit:cover;outline:2px solid var(--gold);outline-offset:-2px">`}${n}</span>`).join('')}</div>`}
+      <div style="display:flex;gap:14px;margin-top:6px">${[['Thảo Vy','av-girl'],['Quang','av-boy'],['Mai','kid']].map(([n,a])=>`<span class="pill" style="gap:10px;font-weight:800;font-size:16px;color:var(--ink)">${a==='kid'?`<span style="width:40px;height:40px;border-radius:50%;flex:none;background:#fff3d6 url(${KIDG}) 50% 8%/180% auto no-repeat;box-shadow:inset 0 0 0 2px var(--gold)"></span>`:`<img src="assets/${a}.png?v=2" alt="" style="width:40px;height:40px;border-radius:50%;object-fit:cover;outline:2px solid var(--gold);outline-offset:-2px">`}${n}</span>`).join('')}</div>`}
     else{tb.innerHTML=`<div class="dark" style="display:flex;align-items:center;gap:16px;padding:16px 22px;box-shadow:inset 0 0 0 3px var(--gold)">
         <div style="display:flex;gap:0">${'<i class="coin" style="width:56px;height:56px;margin-right:-18px"></i>'.repeat(3)}<i style="width:18px;flex:none"></i></div>
         <div style="flex:1"><div style="font-weight:700;font-size:13px;color:var(--cream-2)">Số lì xì hiện có</div><div style="font-family:var(--display);font-weight:800;font-size:40px;line-height:1"><span data-bal>${S.balance}</span> lì xì</div><div style="font-size:12px;font-weight:700;color:var(--cream-2)">Dùng để đặt Bầu Cua và mua vé vào trận Ô Ăn Quan</div></div>
@@ -639,7 +640,7 @@ function bcLobby(){
 }
 function chatHTML(x,y,w,hh){return `<div class="chat dark abs" style="left:${x}px;top:${y}px;width:${w}px;height:${hh}px;box-shadow:inset 0 0 0 6px var(--gold),0 10px 20px rgba(0,0,0,.25)"><h3>Trò chuyện</h3><div class="div"></div><div class="msgs" id="msgs" aria-live="polite"></div><div class="div"></div><form class="chatin" id="chatf"><input id="chatin" maxlength="60" placeholder="Nhắn gì đó..." aria-label="Tin nhắn"><button type="submit" aria-label="Gửi">${I('send')}</button></form></div>`}
 function say(who,text){const box=$('#msgs');if(!box)return;const me=who==='me';const sys=who==='sys';const b=BOTS.find(x=>x.id===who);
-  const av=me?'assets/av-me.png':b?`assets/${b.av}.png`:'';const nm=me?esc(S.name):b?b.name:'';
+  const av=me?'assets/av-me.png?v=2':b?`assets/${b.av}.png?v=2`:'';const nm=me?esc(S.name):b?b.name:'';
   box.appendChild(h(sys?`<div class="msg sys"><span class="bub">${esc(text)}</span></div>`:`<div class="msg ${me?'me':''}"><img src="${av}" alt=""><div><div class="who">${nm}</div><span class="bub">${esc(text)}</span></div><span class="t">${hhmm()}</span></div>`));
   box.scrollTop=box.scrollHeight;if(!me&&!sys)SFX.tick()}
 function wireChat(el){$('#chatf',el).onsubmit=e=>{e.preventDefault();const i=$('#chatin',el);const v=i.value.trim();if(!v)return;say('me',v);i.value='';const b=pick(BOTS);later(()=>say(b.id,pick(LINES.reply)),900+rnd(900))}}
@@ -659,7 +660,7 @@ function bcRoom(id){
   const seats=[{me:true},null,null,null,null,null];
   const drawSeats=()=>{$('#seats',el).innerHTML=seats.map((s,i)=>{const x=70+(i%3)*280,y=i<3?150:350;
     if(!s)return `<button class="seat empty abs" data-inv style="left:${x}px;top:${y}px;color:var(--cream)"><div class="plus">${I('userplus')}</div><div style="font-weight:800;font-size:14px">Mời bạn</div></button>`;
-    const av=s.me?'assets/av-me.png':`assets/${s.av}.png`;return `<div class="seat full abs" style="left:${x}px;top:${y}px"><img class="av" src="${av}" alt=""><div class="nm">${s.me?esc(S.name):s.name}</div><span class="chipst ${s.me?'':'g'}" style="${s.me?'background:var(--coin);color:var(--ink)':''};display:inline-block;margin-top:4px">${s.me?'Bạn · Chủ phòng':'Sẵn sàng'}</span></div>`}).join('');
+    const av=s.me?'assets/av-me.png?v=2':`assets/${s.av}.png?v=2`;return `<div class="seat full abs" style="left:${x}px;top:${y}px"><img class="av" src="${av}" alt=""><div class="nm">${s.me?esc(S.name):s.name}</div><span class="chipst ${s.me?'':'g'}" style="${s.me?'background:var(--coin);color:var(--ink)':''};display:inline-block;margin-top:4px">${s.me?'Bạn · Chủ phòng':'Sẵn sàng'}</span></div>`}).join('');
     $('#rsign b',el).textContent=`Phòng chờ · ${seats.filter(Boolean).length}/6 người`;$$('[data-inv]',el).forEach(b=>b.onclick=()=>inviteModal(id))};
   drawSeats();
   say('sys',`Đã tạo phòng ${id}`);
@@ -705,8 +706,8 @@ function bcTable(id,roomEl){
 }
 function bcPlayers(){const pl=$('#plist');if(!pl)return;
   const st=(bet,last)=>last!=null?`<span class="chipst ${last>0?'g':'r'}">${sgn(last)} lì xì</span>`:bet?`<span class="chipst g">Đã đặt ${ANn(bet)}</span>`:`<span class="chipst">${BC.phase==='bet'?'Chưa đặt':'Đang chọn'}</span>`;
-  pl.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><div class="pchip"><img src="assets/av-me.png" alt=""><div><div class="n">${esc(S.name)} (Bạn)</div><div class="c"><i class="coin"></i><span data-bal>${S.balance}</span></div></div></div>${st(BC.phase==='bet'?null:BC.pick,BC.myLast)}</div>`+
-    BC.bots.map(b=>`<div style="display:flex;justify-content:space-between;align-items:center"><div class="pchip"><img src="assets/${b.av}.png" alt=""><div><div class="n">${b.name}</div><div class="c"><i class="coin"></i>${b.bal}</div></div></div>${st(b.bet,b.last)}</div>`).join('')}
+  pl.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><div class="pchip"><img src="assets/av-me.png?v=2" alt=""><div><div class="n">${esc(S.name)} (Bạn)</div><div class="c"><i class="coin"></i><span data-bal>${S.balance}</span></div></div></div>${st(BC.phase==='bet'?null:BC.pick,BC.myLast)}</div>`+
+    BC.bots.map(b=>`<div style="display:flex;justify-content:space-between;align-items:center"><div class="pchip"><img src="assets/${b.av}.png?v=2" alt=""><div><div class="n">${b.name}</div><div class="c"><i class="coin"></i>${b.bal}</div></div></div>${st(b.bet,b.last)}</div>`).join('')}
 function bcRecent(){const r=$('#recent');if(!r)return;r.innerHTML=BC.hist.length?BC.hist.slice(0,4).map(x=>`<span style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:var(--ink-2)">V${pad2(x.round)}<img src="assets/${x.res}.png" alt="${ANn(x.res)}" style="width:30px;height:30px;object-fit:contain"></span>`).join(''):'<span class="p" style="font-size:12px">Chưa có ván nào</span>'}
 function bcStake(){const s=S.stake||1;$('#stk').textContent=s;$('#pay').textContent=s*5}
 function dieFace(k){return `<div class="face"><img src="assets/${k}.png" alt="${ANn(k)}"></div>`}
@@ -735,7 +736,7 @@ function bcConfirm(){
   addLixi(-s,`Bầu Cua · Ván ${pad2(BC.round)} · đặt ${ANn(BC.pick)}`);
   BC.phase='locked';BC.stakeUsed=s;
   const t=$(`.tile[data-k="${BC.pick}"]`);t.classList.remove('sel');t.classList.add('locked');
-  BC.bots.forEach((b,i)=>later(()=>{if(b.bal<1)b.bal=15;b.bet=pick(AN).k;b.bal--;const tt=$(`.tile[data-k="${b.bet}"]`);tt&&$('.bets',tt).insertAdjacentHTML('beforeend',`<img src="assets/${b.av}.png" alt="${b.name}">`);bcPlayers();if(Math.random()<.6)say(b.id,pick(LINES.bet))},400+i*500));
+  BC.bots.forEach((b,i)=>later(()=>{if(b.bal<1)b.bal=15;b.bet=pick(AN).k;b.bal--;const tt=$(`.tile[data-k="${b.bet}"]`);tt&&$('.bets',tt).insertAdjacentHTML('beforeend',`<img src="assets/${b.av}.png?v=2" alt="${b.name}">`);bcPlayers();if(Math.random()<.6)say(b.id,pick(LINES.bet))},400+i*500));
   bcPlayers();bcUI();
 }
 async function bcShake(){
@@ -769,7 +770,7 @@ function bcResult(win,res,net){
       ${win?'':`<div><div class="tile lose" style="position:relative;margin:0 auto;opacity:.8"><img class="art" src="assets/${BC.pick}.png" alt=""><span class="tag">−${BC.stakeUsed} lì xì</span></div><div style="font-family:var(--display);font-weight:800;font-size:22px;margin-top:8px">${ANn(BC.pick)}</div></div>`}
     </div>
     <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px"><i class="coin" style="width:40px;height:40px"></i><span style="font-family:var(--display);font-weight:800;font-size:34px;color:${win?'var(--green)':'var(--red)'}">${sgn(net)} lì xì</span><span style="font-family:var(--display);font-weight:700;font-size:16px;color:var(--ink-2)">· số dư ${S.balance} · +10 điểm cấp</span></div>
-    <div style="display:flex;justify-content:center;gap:16px;margin-top:10px">${BC.bots.map(x=>`<span class="pill" style="padding:4px 12px 4px 4px;background:var(--cream-2);font-weight:800;font-size:14px"><img src="assets/${x.av}.png" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover"><span class="${x.last>0?'pos':'neg'}">${x.name} ${sgn(x.last)}</span></span>`).join('')}</div>
+    <div style="display:flex;justify-content:center;gap:16px;margin-top:10px">${BC.bots.map(x=>`<span class="pill" style="padding:4px 12px 4px 4px;background:var(--cream-2);font-weight:800;font-size:14px"><img src="assets/${x.av}.png?v=2" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover"><span class="${x.last>0?'pos':'neg'}">${x.name} ${sgn(x.last)}</span></span>`).join('')}</div>
     <div style="display:flex;justify-content:center;gap:16px;margin-top:20px"><button class="btn brown" id="lv" style="width:200px">Rời phòng</button><button class="btn orange" id="nx" style="width:240px">Ván tiếp</button></div></div>`);
   const m=modal(`Kết quả ván ${pad2(BC.round)}`,680,b,{closable:false});
   $('#lv',b).onclick=()=>{m.close();bcSummary()};
