@@ -289,7 +289,7 @@ svg.i{fill:none;stroke:var(--cream);stroke-width:2.4;stroke-linecap:round;stroke
 .ent .disc img{width:100%;height:100%;object-fit:cover;mix-blend-mode:darken}
 .ent .lbl{position:relative;margin-top:-10px;padding:2px 12px;border-radius:999px;background:var(--brown-dk);box-shadow:inset 0 0 0 2px var(--gold);font-family:var(--display);font-weight:700;font-size:16px;color:var(--cream);white-space:nowrap}
 /* A6 · Nhân vật & Tủ đồ (Figma: N1–N8), A7 · Túi lì xì (Figma: L1–L2) */
-.cm{display:flex;flex-direction:column;gap:14px;height:490px}
+.cm{display:flex;flex-direction:column;gap:14px;height:540px}
 .cm-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .cm-main{display:flex;gap:20px;flex:1;min-height:0}
 .cm-side{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;padding:12px 8px 8px 2px;align-content:flex-start}
@@ -338,8 +338,11 @@ svg.i{fill:none;stroke:var(--cream);stroke-width:2.4;stroke-linecap:round;stroke
 .cond .hd{display:flex;justify-content:space-between;gap:10px;font-weight:800;font-size:15px;color:var(--ink);margin-bottom:6px}
 .cond .v{font-family:var(--display);font-weight:700;color:var(--title-red);white-space:nowrap}.cond .v.ok{color:var(--green)}
 .acts{display:flex;gap:12px;margin-top:4px}
+.acts.mid{justify-content:center;margin-top:18px}
+/* the new popups use a thinner wood border so the cream body reaches up under the sign (Figma, updated) */
+.frame.thin{padding:16px 20px 20px}.frame.tight{padding:6px 20px 6px}
 .thumb{width:72px;height:72px;border-radius:16px;box-shadow:inset 0 0 0 2px var(--gold);flex:none}
-.wm{display:flex;flex-direction:column;gap:14px;height:500px}
+.wm{display:flex;flex-direction:column;gap:14px;height:510px}
 .bal{display:flex;align-items:center;gap:20px;padding:12px 22px;border-radius:24px;background:var(--brown-dk);box-shadow:inset 0 0 0 3px var(--gold);color:var(--cream)}
 .bal img{width:80px;height:80px;border-radius:20px;flex:none}
 .statrow{display:flex;gap:12px}
@@ -742,7 +745,7 @@ const pngC=o=>o.img&&/\.png$/.test(o.img)?'png':'';
 const tileHTML=(o,cls,sub,badge,attr)=>`<button class="ccard ${cls}" ${attr}><span class="art"><i class="${pngC(o)}" style="${artBg(o,112)}"></i>${cls==='lock'?`<span class="lk">${I('lock')}</span>`:''}</span><b>${o.n}</b>${sub}${badge?`<em class="badge">${I('check')}${badge}</em>`:''}</button>`;
 
 function charModal(tab='nv',slot='ao'){
-  const b=h('<div class="cm"></div>');const m=modal('Nhân vật',1100,b);
+  const b=h('<div class="cm"></div>');const m=modal('Nhân vật',1100,b);$('.frame',m).classList.add('tight');
   let selC=meChar().k,selV=null;
   const draw=()=>{
     let stg,side;
@@ -799,21 +802,21 @@ function charModal(tab='nv',slot='ao'){
 }
 function condModal(o){
   const vp=o.s==='vp',cs=o.conds(),cta=o.event?null:CTA[o.cta];
-  const b=h(`<div class="cwrap"><span class="cart"><i class="${pngC(o)}" style="${artBg(o,180)}"></i><span class="lk big">${I('lock')}</span></span><div class="ci">
+  const b=h(`<div><div class="cwrap"><span class="cart"><i class="${pngC(o)}" style="${artBg(o,180)}"></i><span class="lk big">${I('lock')}</span></span><div class="ci">
     <div class="bt">${o.n}</div><p class="p">${o.desc}</p><div class="lab">${vp?'Cách thu thập':'Điều kiện mở khóa'}</div>
-    ${cs.map(c=>{const ok=c[3]!=='Chưa mở'&&c[1]>=c[2];return `<div class="cond"><div class="hd"><span>${c[0]}</span><span class="v ${ok?'ok':''}">${condVal(c)}</span></div><div class="prog"><i class="${ok?'ok':''}" style="width:${c[3]==='Chưa mở'?0:Math.min(100,c[1]/c[2]*100)}%"></i></div></div>`}).join('')}
-    <div class="acts">${cta?`<button class="btn cream sm" id="no">Để sau</button><button class="btn orange sm" id="go">${cta[0]}</button>`:'<button class="btn brown sm" id="no">Đã hiểu</button>'}</div></div></div>`);
-  const m=modal(vp?'Chưa thu thập':'Chưa mở khóa',680,b);
+    ${cs.map(c=>{const ok=c[3]!=='Chưa mở'&&c[1]>=c[2];return `<div class="cond"><div class="hd"><span>${c[0]}</span><span class="v ${ok?'ok':''}">${condVal(c)}</span></div><div class="prog"><i class="${ok?'ok':''}" style="width:${c[3]==='Chưa mở'?0:Math.min(100,c[1]/c[2]*100)}%"></i></div></div>`}).join('')}</div></div>
+    <div class="acts mid">${cta?`<button class="btn cream sm" id="no">Để sau</button><button class="btn orange sm" id="go">${cta[0]}</button>`:'<button class="btn brown sm" id="no">Đã hiểu</button>'}</div></div>`);
+  const m=modal(vp?'Chưa thu thập':'Chưa mở khóa',680,b);$('.frame',m).classList.add('thin');
   $('#no',b).onclick=()=>m.close();
   const g=$('#go',b);if(g)g.onclick=()=>{closeAll();setTimeout(cta[1],230)};
 }
 function buyModal(i,after){
   const short=S.balance<i.price;
-  const b=h(`<div class="buy"><span class="bart"><i style="${spr(i.sh,176)}"></i></span><div class="bi"><div class="bt">${i.n}</div><p class="p">${i.desc}</p>
+  const b=h(`<div><div class="buy"><span class="bart"><i style="${spr(i.sh,176)}"></i></span><div class="bi"><div class="bt">${i.n}</div><p class="p">${i.desc}</p>
     <span class="price lg"><i class="coin" style="width:26px;height:26px"></i>${i.price} lì xì</span>
-    <p class="p" style="font-size:12px;font-weight:700;${short?'color:var(--title-red)':''}">Túi lì xì: ${S.balance} ${short?`· còn thiếu ${i.price-S.balance} lì xì`:`→ còn ${S.balance-i.price} lì xì sau khi mua`}</p>
-    <div class="acts"><button class="btn cream sm" id="no">${short?'Để sau':'Hủy'}</button><button class="btn orange sm" id="yes">${short?'Nhận thêm lì xì':`Mua · ${i.price} lì xì`}</button></div></div></div>`);
-  const m=modal(short?'Chưa đủ lì xì':'Mua đồ',640,b);
+    <p class="p" style="font-size:12px;font-weight:700;${short?'color:var(--title-red)':''}">Túi lì xì: ${S.balance} ${short?`· còn thiếu ${i.price-S.balance} lì xì`:`→ còn ${S.balance-i.price} lì xì sau khi mua`}</p></div></div>
+    <div class="acts mid"><button class="btn cream sm" id="no">${short?'Để sau':'Hủy'}</button><button class="btn orange sm" id="yes">${short?'Nhận thêm lì xì':`Mua · ${i.price} lì xì`}</button></div></div>`);
+  const m=modal(short?'Chưa đủ lì xì':'Mua đồ',640,b);$('.frame',m).classList.add('thin');
   $('#no',b).onclick=()=>m.close();
   $('#yes',b).onclick=()=>{m.close();
     if(short){setTimeout(lixiModal,230);return}
@@ -825,15 +828,15 @@ function shareModal(){
   const text=`Mình vừa thu thập ${got.length}/${V.length} món bộ Đồ chơi dân gian trong Sân Chơi Dân Gian! Vào chơi cùng mình nhé · ID ${S.pid}`;
   const b=h(`<div style="text-align:center"><div class="card" style="padding:14px 18px;background:var(--cream-2);box-shadow:inset 0 0 0 2px var(--tile-line)">
       <div style="display:flex;justify-content:center;gap:10px">${got.map(i=>`<span class="thumb" style="${spr(i.sh,72)}"></span>`).join('')}</div><p class="p" style="margin-top:10px">${esc(text)}</p></div>
-    <div class="acts" style="justify-content:center;margin-top:16px">${navigator.share?'<button class="btn orange sm" id="sh">Chia sẻ</button>':''}<button class="btn ${navigator.share?'cream':'orange'} sm" id="cp">Sao chép lời mời</button></div></div>`);
-  const m=modal('Chia sẻ',640,b);
+    <div class="acts" style="justify-content:center;margin-top:60px">${navigator.share?'<button class="btn orange sm" id="sh">Chia sẻ</button>':''}<button class="btn ${navigator.share?'cream':'orange'} sm" id="cp">Sao chép lời mời</button></div></div>`);
+  const m=modal('Chia sẻ',640,b);$('.frame',m).classList.add('thin');
   const sh=$('#sh',b);if(sh)sh.onclick=async()=>{try{await navigator.share({title:'Sân Chơi Dân Gian',text,url:link});m.close()}catch(e){}};
   $('#cp',b).onclick=async()=>{let ok=false;try{await navigator.clipboard.writeText(text+' '+link);ok=true}catch(e){}toast(ok?'Đã sao chép lời mời':'Chưa sao chép được, hãy thử lại',1);if(ok)m.close()};
 }
 
 /* ================= A7 · Túi lì xì (popup, Figma L1–L2) ================= */
 function walletModal(tab='so',filter='all'){
-  const b=h('<div class="wm"></div>');modal('Túi lì xì',1000,b);
+  const b=h('<div class="wm"></div>');$('.frame',modal('Túi lì xì',1000,b)).classList.add('thin');
   const dayKey=ts=>new Date(ts).toLocaleDateString('sv');
   const dayLabel=k=>k===today()?'Hôm nay':k===yesterday()?'Hôm qua':new Date(k+'T00:00').toLocaleDateString('vi-VN');
   const row=(x,short)=>`<div class="txrow"><i class="coin" style="width:24px;height:24px"></i><div class="l"><b>${esc(x.label)}</b><span>${short?hhmm(x.ts):when(x.ts)}</span></div><div class="a ${x.amt>=0?'pos':'neg'}">${sgn(x.amt)} lì xì</div></div>`;
