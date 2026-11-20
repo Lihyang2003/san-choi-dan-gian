@@ -330,6 +330,7 @@ svg.i{fill:none;stroke:var(--cream);stroke-width:2.4;stroke-linecap:round;stroke
 .cwrap,.buy{display:flex;gap:22px;align-items:center;text-align:left}
 .cart,.bart{position:relative;isolation:isolate;flex:none;border-radius:22px;background:var(--cream-2);box-shadow:inset 0 0 0 2px var(--tile-line);overflow:hidden}
 .cart{width:196px;height:250px}.cart i{position:absolute;left:8px;top:35px;width:180px;height:180px;opacity:.45;filter:blur(7px);mix-blend-mode:darken}
+.spot .fig.png,.ccard .art i.png,.cart i.png{mix-blend-mode:normal} /* transparent PNG characters need no blend */
 .bart{width:190px;height:190px}.bart i{position:absolute;left:7px;top:7px;width:176px;height:176px;mix-blend-mode:darken}
 .ci,.bi{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
 .bt{font-family:var(--display);font-weight:800;font-size:30px;line-height:32px;color:var(--ink)}
@@ -680,15 +681,15 @@ function profile(tab){
    so a character or item unlocks by itself once the player has done enough. */
 const lc=s=>s.charAt(0).toLowerCase()+s.slice(1);
 const CHARS=[
- {k:'boy',n:'Tuấn Anh',img:KIDB,av:'assets/av-me.png?v=2',desc:'Cậu bé tinh nghịch, mê Ô Ăn Quan và thả diều.'},
- {k:'ba',n:'Bà Ngoại',img:'assets/char-ba.jpg',av:'assets/av-ba.jpg',desc:'Bà hiền hậu ở Nhà Ngoại, thuộc lòng mọi trò chơi dân gian.'},
- {k:'mai',n:'Bé Mai',img:KIDG,av:'assets/av-mai.jpg',lockSub:'Thắng Mai 3 ván',cta:'oq',desc:'Cô bé hàng xóm, cao thủ Ô Ăn Quan. Thắng Mai để rủ bạn ấy về đội mình.',
+ {k:'boy',n:'Tuấn Anh',img:'assets/char-tuan-anh.png',av:'assets/av-me.png?v=2',desc:'Cậu bé tinh nghịch, mê Ô Ăn Quan và thả diều.'},
+ {k:'ba',n:'Bà Ngoại',img:'assets/char-ba.png',av:'assets/av-ba.jpg?v=2',desc:'Bà hiền hậu ở Nhà Ngoại, thuộc lòng mọi trò chơi dân gian.'},
+ {k:'mai',n:'Bé Mai',img:'assets/char-mai.png',av:'assets/av-mai.jpg?v=2',lockSub:'Thắng Mai 3 ván',cta:'oq',desc:'Cô bé hàng xóm, cao thủ Ô Ăn Quan. Thắng Mai để rủ bạn ấy về đội mình.',
   conds:()=>[['Thắng Mai 3 ván Ô Ăn Quan',S.stats.oq.wins,3,'ván'],['Đạt Cấp 2',lvInfo().lv,2,'cấp']]},
  {k:'ong',n:'Ông Ngoại',img:'assets/char-ong.jpg',av:'assets/av-ong.jpg',lockSub:'Đạt Cấp 5',cta:'oq',desc:'Ông hay kể chuyện cổ tích bên hiên Nhà Ngoại.',
   conds:()=>[['Đạt Cấp 5',lvInfo().lv,5,'cấp'],['Thắng 5 ván Ô Ăn Quan',S.stats.oq.wins,5,'ván']]},
- {k:'co',n:'Cô Tư',img:'assets/char-co-tu.jpg',av:'assets/av-co-tu.jpg',lockSub:'Điểm danh 7 lần',cta:'ci',desc:'Cô bán bánh ở Chợ, luôn để dành quà cho bạn nhỏ chăm chỉ.',
+ {k:'co',n:'Cô Tư',img:'assets/char-co-tu.png',av:'assets/av-co-tu.jpg?v=2',lockSub:'Điểm danh 7 lần',cta:'ci',desc:'Cô bán bánh ở Chợ, luôn để dành quà cho bạn nhỏ chăm chỉ.',
   conds:()=>[['Điểm danh 7 lần',S.ciCount,7,'lần'],['Trúng 3 ván Bầu Cua',S.stats.bc.wins,3,'ván']]},
- {k:'teu',n:'Chú Tễu',img:'assets/char-teu.jpg',av:'assets/av-teu.jpg',lockSub:'Sự kiện Tết',event:1,desc:'Chú Tễu múa rối nước chỉ xuất hiện trong dịp Tết. Hẹn gặp bạn khi sự kiện mở!',
+ {k:'chu',n:'Chú Ba',img:'assets/char-chu-ba.png',av:'assets/av-chu-ba.jpg',lockSub:'Sự kiện Tết',event:1,desc:'Chú Ba đi làm ăn xa, chỉ về quê dịp Tết. Hẹn gặp chú khi sự kiện Tết mở!',
   conds:()=>[['Tham gia sự kiện Tết 2027',0,1,'Chưa mở'],['Trúng 3 ván Bầu Cua dịp Tết',0,3,'ván']]}];
 const met=o=>!!o.conds&&!o.event&&o.conds().every(([,a,n])=>a>=n);
 const unlocked=c=>!c.conds||met(c);
@@ -737,7 +738,8 @@ const worn=s=>ITEMS.find(i=>i.k===S.outfit[s]);
 const condVal=([,a,n,u])=>u==='Chưa mở'?'Chưa mở':a>=n?'Đã xong':u==='cấp'?`Cấp ${a}/${n}`:`${a}/${n} ${u}`;
 const CTA={oq:['Chơi Ô Ăn Quan',oqMenu],bc:['Chơi Bầu Cua',bcLobby],ci:['Điểm danh',lixiModal],iv:['Mời bạn',()=>inviteModal()]};
 const stageHTML=(fig,name,tag,tagCls,desc,btn)=>`<div class="stagep"><div class="spot">${fig}</div><h3>${name}</h3><span class="tagp ${tagCls}">${tag}</span><p class="p">${desc}</p>${btn}</div>`;
-const tileHTML=(o,cls,sub,badge,attr)=>`<button class="ccard ${cls}" ${attr}><span class="art"><i style="${artBg(o,112)}"></i>${cls==='lock'?`<span class="lk">${I('lock')}</span>`:''}</span><b>${o.n}</b>${sub}${badge?`<em class="badge">${I('check')}${badge}</em>`:''}</button>`;
+const pngC=o=>o.img&&/\.png$/.test(o.img)?'png':'';
+const tileHTML=(o,cls,sub,badge,attr)=>`<button class="ccard ${cls}" ${attr}><span class="art"><i class="${pngC(o)}" style="${artBg(o,112)}"></i>${cls==='lock'?`<span class="lk">${I('lock')}</span>`:''}</span><b>${o.n}</b>${sub}${badge?`<em class="badge">${I('check')}${badge}</em>`:''}</button>`;
 
 function charModal(tab='nv',slot='ao'){
   const b=h('<div class="cm"></div>');const m=modal('Nhân vật',1100,b);
@@ -746,7 +748,7 @@ function charModal(tab='nv',slot='ao'){
     let stg,side;
     if(tab==='nv'){
       const c=CHARS.find(x=>x.k===selC)||CHARS[0],using=meChar().k===c.k;
-      stg=stageHTML(`<i class="fig" style="left:46px;width:208px;height:208px;${artBg(c)}"></i>`,c.n,(c.k==='boy'?'Mặc định':'Đã mở khóa')+(using?' · Đang dùng':''),'',c.desc,
+      stg=stageHTML(`<i class="fig ${pngC(c)}" style="left:46px;width:208px;height:208px;${artBg(c)}"></i>`,c.n,(c.k==='boy'?'Mặc định':'Đã mở khóa')+(using?' · Đang dùng':''),'',c.desc,
         using?'<button class="btn off" disabled style="width:260px;height:52px">Đang dùng</button>':'<button class="btn orange" id="use" style="width:260px;height:52px">Dùng nhân vật này</button>');
       const card=x=>{const u=unlocked(x),inUse=meChar().k===x.k;
         return tileHTML(x,!u?'lock':(inUse||selC===x.k)?'sel':'',`<span class="sub ${u?'':'bad'}">${u?(x.k==='boy'?'Mặc định':'Đã mở khóa'):x.lockSub}</span>`,inUse?'Đang dùng':'',`data-c="${x.k}" aria-label="${x.n}${u?'':', chưa mở khóa'}"`)};
@@ -797,7 +799,7 @@ function charModal(tab='nv',slot='ao'){
 }
 function condModal(o){
   const vp=o.s==='vp',cs=o.conds(),cta=o.event?null:CTA[o.cta];
-  const b=h(`<div class="cwrap"><span class="cart"><i style="${artBg(o,180)}"></i><span class="lk big">${I('lock')}</span></span><div class="ci">
+  const b=h(`<div class="cwrap"><span class="cart"><i class="${pngC(o)}" style="${artBg(o,180)}"></i><span class="lk big">${I('lock')}</span></span><div class="ci">
     <div class="bt">${o.n}</div><p class="p">${o.desc}</p><div class="lab">${vp?'Cách thu thập':'Điều kiện mở khóa'}</div>
     ${cs.map(c=>{const ok=c[3]!=='Chưa mở'&&c[1]>=c[2];return `<div class="cond"><div class="hd"><span>${c[0]}</span><span class="v ${ok?'ok':''}">${condVal(c)}</span></div><div class="prog"><i class="${ok?'ok':''}" style="width:${c[3]==='Chưa mở'?0:Math.min(100,c[1]/c[2]*100)}%"></i></div></div>`}).join('')}
     <div class="acts">${cta?`<button class="btn cream sm" id="no">Để sau</button><button class="btn orange sm" id="go">${cta[0]}</button>`:'<button class="btn brown sm" id="no">Đã hiểu</button>'}</div></div></div>`);
